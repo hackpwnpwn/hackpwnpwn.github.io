@@ -10,16 +10,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="hackpwn,"> 
-    <meta name="description" content="
-逆向某钉数据库加密算法，
+    <meta name="description" content="逆向某钉数据库加密算法工具：jadx-gui-0.9.0 frida ida阿里数据库一贯加密数据库so文件：libdatabase_sqlcrypto.so
 
-工具：jadx-gui-0.9.0 frida ida
-
-阿里数据库一贯加密数据库so文件：libdatabase_sqlcrypto.so
-
-
-
-喵进去搜一搜，可发现,"> 
+喵进去搜一搜，可发现是AES128加,"> 
     <meta name="author" content="dh、Catsay"> 
     <link rel="alternative" href="atom.xml" title="hackpwn" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -72,15 +65,8 @@
 
         </div>
         <div class="content markdown">
-            <ol>
-<li><p>逆向某钉数据库加密算法，</p>
-</li>
-<li><p>工具：jadx-gui-0.9.0 frida ida</p>
-</li>
-<li><p>阿里数据库一贯加密数据库so文件：libdatabase_sqlcrypto.so</p>
+            <h3 id="逆向某钉数据库加密算法"><a href="#逆向某钉数据库加密算法" class="headerlink" title="逆向某钉数据库加密算法"></a>逆向某钉数据库加密算法</h3><h3 id="工具：jadx-gui-0-9-0-frida-ida"><a href="#工具：jadx-gui-0-9-0-frida-ida" class="headerlink" title="工具：jadx-gui-0.9.0 frida ida"></a>工具：jadx-gui-0.9.0 frida ida</h3><p>阿里数据库一贯加密数据库so文件：libdatabase_sqlcrypto.so</p>
 <p><img src="/2019/11/13/%E9%80%86%E5%90%91%E6%9F%90%E9%92%89%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/lib.png" alt="lib.png"></p>
-</li>
-</ol>
 <p>喵进去搜一搜，可发现是AES128加密</p>
 <p><img src="/2019/11/13/%E9%80%86%E5%90%91%E6%9F%90%E9%92%89%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/aes.png" alt="aes.png"></p>
 <p>跟进去分析可看到数据库初始化函数，疑似密钥拷贝函数</p>
