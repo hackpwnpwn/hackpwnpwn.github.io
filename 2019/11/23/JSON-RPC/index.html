@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JSON-RPC - hackpwn</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="hackpwn,"> 
+    <meta name="description" content="
+
+function doDecrypt (pwd, onError) {
+	console.log(&#39;in doDecrypt&#39;);
+	const txt = document.getElemen,"> 
+    <meta name="author" content="dh、Catsay"> 
+    <link rel="alternative" href="atom.xml" title="hackpwn" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">hackpwn</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" target="_blank" rel="noopener" data-url="http://hackpwn.xyz"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">JSON-RPC</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" target="_blank" rel="noopener" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;" target="_blank" rel="noopener"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">JSON-RPC</h1>
+        <div class="stuff">
+            <span>十一月 23, 2019</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/JSON-RPC/" rel="tag">JSON_RPC</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <script src=/js/crypto-js.js></script>
+<script>
+function doDecrypt (pwd, onError) {
+	console.log('in doDecrypt');
+	const txt = document.getElementById('enc_content').innerHTML;
+	let plantext;
+	try {
+		const bytes = CryptoJS.AES.decrypt(txt, pwd);
+		var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+	} catch(err) {
+		if(onError) {
+			onError(err);
+		}
+		return;
+	}
+	document.getElementById('enc_content').innerHTML = plaintext;
+	document.getElementById('enc_content').style.display = 'block';
+	document.getElementById('enc_passwd').style.display = 'none';
+	if(typeof MathJax !== 'undefined') {
+		MathJax.Hub.Queue(
+			['resetEquationNumbers', MathJax.InputJax.TeX],
+			['PreProcess', MathJax.Hub],
+			['Reprocess', MathJax.Hub]
+		);
+	}
+}
+</script>
+<div id="enc_content" style="display:none">U2FsdGVkX19uke13R0c729+2WWP+g8aSg+/o2wsCoTce0tKGylyeukudovUVI4JCbCNyKaUuMEIsL+/Q7FqX0+AehSUi5g8n8qlllgoiQOmqFcW1dye9/Q1V/HPaVN0jUFCoY8meYXmsG+xkpwxC0mlW8R4PUys4ZIkpbHmthOhPbBfOson+1zkPGKtosIFMdVLdTe02/Qly2X1V0TRH/CY4c5QR/FaNbxi2jReRDB5JGd89xguaDDHBEueR1VU4HHKFP3hn7GxYSGBBLumOu53GQt8M04ygvLFT8n2iFZqUtndSgQPlOmaHXjaMLNMn2zI3IVO0CopKpVthBAzARlyZe8iSadn6NpKzcXJqN8+YhrKx2q051/jDIrNOqHA1EUDW5bjft69OF/kPZztokz2NiASy7LcxNdN8A5pUQ9vL5TIbavALq9jLx2XCqM8B/4Z2mMuXzeHnH0Cj3fRU7REsGKkuwmyCNE5xjLZOm9MER/gWpxAst4sm1cOYHWJyd98ciH2LFsPJAvHodr2LLs/JHeCJ5c1HpHGBFkQ+2mAcwoDRiMyOd+27P4t6jI8Uyx0EXv3twaMAc0UD/EfThliOJoIxjmV7DPsqlntkIx0nNqUSygc5YLo3pMAzyH5d28UUNYG0KxdwDCHaBF2VdVIWaQVFcz9ItucVG8kHQvl8cXZJFredHmteAjvwsoD2YLr/vP62KlED+2VXs8sImZLW8/9UJIoRVTT054md3HL1HVNqoV2+85BXhA/HynO54BoSbY0AF05S186Aht3KLbmFXjQ7ekcOebrgZBuKR2hvkoKWJ/9swD+RXKWarZXqULCL/pUpQMsNpz1p3kEr/wQBLNUzzYZmO5aSnfRwlFtyCJgi/FNrGUeKSZR8jP6JXEahJ8Am3F2KImijGtl95mMBIzWImuFPmg/82zwv0fgyi5W+iTRd6hD5mroOe3QE0gEhunLpfAPkY9TYbjvvn8uqq6IPmfqffkdnZi0udb8Bcs0dqduCeo7mOza9v9aVVusW2vzRXY7JW+0Mynm0pCPQZeSQgqVPzu07T1IRWbdXM2qegSfH6x/4I1kO2HBA73ZJgIsmPtFidRhY1EdvqAqwOlGf6YjCVGCqfE+gqbmJoR4zhmNYOhHEgoe5ARKSTWuhavudbOkcT4SnmbwCp55/kRXV/AMwgOnnWN9fK2PTGsJ5t32NbnYnlk8oNKb7sCVKq+xlbkPPvqNNBa+h9eNjGjvPxQ2AgChptcOfvChhri29qHVwfnrKqDNT23RPgCYd9wgtpMUcGe8VcUE5iCBF4ojEpZkidcwYIxWKJ+HOy2ad/zic6e0Z48HQnCiuWDc5k+r/FL8/bAvypZVo4fKaykDmI5FfsAVkp+AefpDs/8Xg3VaHcwp69OzhWKtTk+ZTJsx1KqdzX4xeGnv0NFTQ0J9eIqO5/jolbCRQqt/Ld52Bt3KEnGCf9qUH1OfZic6Rbvddlp2yZklvmW4xSwrEs5BTTgn1pIhjb4Ko/hbplktspEBd0pwmfeqq/YN3T8Jb7+alw/F2ZGZUa0bqIaPJ3d6LN/1Ez89KN+mVcSE7Gu4EGE2W2Vu8CfuxSZElksgFaTJQMM17YtlvLzMss1X9G3qtb9PwW+YHQd66UZf2KBORojJPC9lTi0GvYEoQIOKaMKD4TvGPqQQyq26xGC0k+xJ86iz6+zL0YD9H06WGxfQ2AiPLEoT3TJgrLNuxgmvqjGws2LFSNOMV4NMjTogCqGxk/1ydqmCxSTLWfZvkVWg4F8H4fR9Zc3/oIfvGi9W/YV4wXqDG/f8aLcz7cJ8dVV0QyPCAkc1xdsx8UvCSUuDPy2V/wK0ccLCVCDKiuQb29qtiNkFOsvlk7Lo2YsZDYwVbfSfJ+V9vLZxLDRXEYZTWsyixm0pcNYxuY56jhIEyii7fmhJUwxWqHiJKpw==</div>
+<div id="enc_passwd"> <input id="enc_pwd_input" type="password" style="border-radius: 5px;border-style: groove;height: 30px;width: 50%;cursor: auto;font-size: 102%;color: currentColor;outline: none;text-overflow: initial;padding-left: 5px;" onkeydown="if (event.keyCode == 13) { decrypt(); return false;}"> <input type="submit" value="解&nbsp;密" onclick="decrypt()" style="width: 58px;height: 34px;border-radius: 5px;background-color: white;border-style: solid;color: currentColor;"><div id="enc_error" style="display: inline-block;color: #d84527;margin-left: 10px"></div>
+<script>
+var onError = function(error) {
+	document.getElementById("enc_error").innerHTML = "password error!"
+};
+function decrypt() {
+var passwd = document.getElementById("enc_pwd_input").value;
+console.log(passwd);
+doDecrypt(passwd, onError);
+}
+</script>
+</div>
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='https://link.hhtjim.com/163/1363948882.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
