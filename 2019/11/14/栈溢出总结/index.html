@@ -239,6 +239,112 @@
 </blockquote>
 <p> 在栈溢出的基础上，要想执行 shellcode，需要对应的 binary 在运行时，shellcode 所在的区域具有可执行权限。 </p>
 <p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191123100725859.png" alt="image-20191123100725859"></p>
+<h3 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h3><ul>
+<li><p>ncat</p>
+<ul>
+<li>建立local service环境</li>
+<li><code>ncat -vc ./shellcode -kl 127.0.0.1 8888</code></li>
+<li><code>ncat -vc &#39;strace -e trace=read  ./shellcode&#39; -kl ::1 4000</code></li>
+</ul>
+</li>
+<li><p>readelf</p>
+<ul>
+<li><code>readelf -a /lib/i386-linux-gnu/libc.so.6 | grep &#39; printf@&#39;</code></li>
+<li><code>readelf -a ret2shellcode_32  | grep STACK</code></li>
+</ul>
+</li>
+<li><p>GDB</p>
+<ul>
+<li>ni：单步步过</li>
+<li>si：单步步入</li>
+<li>c：运行到下一个断点</li>
+<li>fin：会根据bt（断点）的结果，调到<code>return</code>的位置</li>
+<li>x/wx 0x804a040：dump一个word 16进制</li>
+<li>x/10wx 0x804a040：dump十个word 16进制</li>
+<li>x/7i 0x804a040：看7条指令</li>
+<li>x/s 0x804a040：看字符串</li>
+<li>attach：<ul>
+<li>先查看进程id：<code>pidof shellcode</code></li>
+<li>进入gdb，<code>attach PID</code></li>
+<li>如果不能attach的话，执行：<code>echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Hook&amp;Patch</p>
+<ul>
+<li><p>关掉alarm</p>
+<ul>
+<li><p><code>sed -i s/alarm/isnan/g ./shellcode</code></p>
+</li>
+<li><p><code>ltrace ./shelllcode</code>查看是否还有<code>alarm</code></p>
+</li>
+<li><p><code>hook alarm by LD_PRELOAD</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//hook.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">alarm</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> seconds)</span></span>&#123;<span class="built_in">printf</span>(<span class="string">"%d\n"</span>,seconds);&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// gcc hook.c -o hook.so -shared -fPIC -m32(如果需要64位去掉-m32即可)</span></span><br><span class="line"><span class="comment">// LD_PRELOAD=./hook.so ./shellcode</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这种hook的方式是有局限性的，只有<code>file shellcode</code>之后，出现了<code>dynamically linked</code>的时候才可以这样hook，如果没有，那么证明这个程序是将库编译进入程序的。</p>
+</li>
+<li><p>LD_SHOW_AUXV</p>
+<ul>
+<li><code>LD_SHOW_AUXV=1 ./shellcode</code></li>
+<li>可以和ncat一起用，这样就可以在写exploit的时候看起来很方便。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>qira</p>
+<ul>
+<li><code>qira -s ./shellcode</code></li>
+</ul>
+</li>
+<li><p>pwntools</p>
+<ul>
+<li><p>python2 library &amp; toolkit</p>
+</li>
+<li><p>pip install pwntools</p>
+</li>
+<li><p>tube,asm,disasm,DynELF,shellcraft</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#print enhex(asm('mov eax,ebx'))#89d8</span></span><br><span class="line"><span class="comment">#print disasm(unhex('58'))#pop eax</span></span><br><span class="line">r = remote(<span class="string">'127.0.0.1'</span>,<span class="number">8888</span>)</span><br><span class="line">r.recvuntil(<span class="string">'name'</span>)<span class="comment">#出现name后再send</span></span><br><span class="line">r.sendline(shellcode)</span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>nasm</p>
+<ul>
+<li><p>x86 assembler 编译shellcode</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nasm -felf32 shell.<span class="keyword">asm</span> -o shell.o</span><br><span class="line">ld -melf_i386 shell.o <span class="number">0</span>o shell</span><br><span class="line">objcopy -O binary shell.o shell.bin</span><br><span class="line">objdump -b binary -m i386 -D shell.bin</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>Alphanumeric Shellcode</p>
+<ul>
+<li><p>只使用A-Za-z0-9写shellcode</p>
+</li>
+<li><p><code>int 0x80 = \xcd\x80</code></p>
+<p>怎么做<code>system call?</code></p>
+</li>
+<li><p>自修改</p>
+<p><code>|decoder1(修复坏字节)|encoded decoder2(有坏字节)|encoded shellcode</code></p>
+</li>
+<li><p>Opcode Table</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">0  30 41 42             xor   BYTE PTR [ecx+0x42],al</span><br><span class="line">4  34 41                xor   al,0x41</span><br><span class="line">8  38 41 42             cmp   cmp BYTE PTR [ecx+0x42],al</span><br><span class="line">a  61                   popa</span><br><span class="line">A  41                   inc   ecx</span><br><span class="line">H  48                   dec   eax</span><br><span class="line">P  50                   push  eax</span><br><span class="line">X  58                   pop   eax</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> string.letters+string.digits:</span><br><span class="line">    <span class="keyword">print</span> x,disasm(x+<span class="string">'ABCDEFG'</span>).split(<span class="string">'\n'</span>)[<span class="number">0</span>][<span class="number">6</span>:]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Register 赋值</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PQRSTUVWa</span><br><span class="line">   0:    50                push   eax</span><br><span class="line">   1:    51                push   ecx</span><br><span class="line">   2:    52                push   edx</span><br><span class="line">   3:    53                push   ebx </span><br><span class="line">   4:    54                push   esp</span><br><span class="line">   5:    55                push   ebp</span><br><span class="line">   6:    56                push   esi</span><br><span class="line">   7:    57                push   edi</span><br><span class="line">   8:    61                popa</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>取Shellcode位置：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">LLLLY(assumed we return to shellcode)</span><br><span class="line">   0:   4c                   dec    esp</span><br><span class="line">   1:   4c                   dec    esp</span><br><span class="line">   2:   4c                   dec    esp</span><br><span class="line">   3:   4c                   dec    esp</span><br><span class="line">   4:   59                   pop    ecx</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>eax赋值</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0:   6a  44                   push    0x44</span><br><span class="line">2:   58                       pop     eax</span><br><span class="line">3:   34  43                   xor     al,0x43</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
