@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>逆向分析总结 - hackpwn</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="hackpwn,"> 
+    <meta name="description" content="文章参考自《C++反汇编与逆向分析技术解密》基本数据类型整数类型
+C++提供的整数数据类型有三种：int，long，short。在Visual C++ 6.0(Visual Studio 2013同,"> 
+    <meta name="author" content="dh、Catsay"> 
+    <link rel="alternative" href="atom.xml" title="hackpwn" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">hackpwn</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" target="_blank" rel="noopener" data-url="http://hackpwn.xyz"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">逆向分析总结</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" target="_blank" rel="noopener" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;" target="_blank" rel="noopener"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">逆向分析总结</h1>
+        <div class="stuff">
+            <span>十二月 08, 2019</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/" rel="tag">逆向分析</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h3 id="文章参考自《C-反汇编与逆向分析技术解密》"><a href="#文章参考自《C-反汇编与逆向分析技术解密》" class="headerlink" title="文章参考自《C++反汇编与逆向分析技术解密》"></a>文章参考自《C++反汇编与逆向分析技术解密》</h3><h2 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h2><h3 id="整数类型"><a href="#整数类型" class="headerlink" title="整数类型"></a>整数类型</h3><ul>
+<li><p>C++提供的整数数据类型有三种：<code>int</code>，<code>long</code>，<code>short</code>。在Visual C++ 6.0(Visual Studio 2013同样)中，<code>int</code>类型和<code>long</code>类型在内存中都是占四个字节，<code>short</code>类型在内存中山两个字节。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"int size of is:%d\n"</span>,<span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"long size of is:%d\n"</span>,<span class="keyword">sizeof</span>(<span class="keyword">long</span>));</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"short size of is:%d\n"</span>,<span class="keyword">sizeof</span>(<span class="keyword">short</span>));</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/12/08/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93/image-20191208195745647.png" alt="image-20191208195745647"></p>
+<p>​        由于二进制数字不方便显示和阅读，因此内存中的数据都是采用十六进制的方式进行显示。一个字节由两个十六进制的数组成。在进制转换的过程中，一个十六进制数字可以用4个二进制数字表示，每个二进制数表示<code>1</code>位，因此一个字节在内存中占的是<code>8</code>位。</p>
+<p>​        在C++中，证书类型又可以分为有符号型和无符号型两种。有符号的整数可以用来表示负数与正数，而无符号的整数则只能表示正数。</p>
+</li>
+</ul>
+<ul>
+<li>无符号整数</li>
+</ul>
+<p>​        在内存当中，无符号整数的所有位都用来表示数值。以无符号整数数据<code>unsigned int</code>为例，此类型的变量在内存中占用4个字节，由8个十六进制数组成，取值范围是<code>0x00000000~0xFFFFFFFF</code>，如果转换为十进制的数字，则表示范围为<code>0~4294967295</code></p>
+<p>  ​        当无符号整数不足32位的时候，用<code>0</code>来填充剩余高位，直到占满4个字节内存空间为止。例如，数字<code>5</code>对应的二进制数字为<code>101</code>，只占了3位，按照4字节大小保存，剩余29个高位将用0填充，结果就是<code>00000000000000000000000000000101</code>；转换成十六进制数<code>0x00000005</code>之后，在内存中以小端排序的方式存放，小端排序就是以字节为单位，按照数据类型长度，低数据位排放在内存的低端，高数据排放在内存的高端，如<code>0x12345678</code>将会存储为<code>78 56 34 12</code>。相对于的，还有一个是大端排序，低数据放在高端，高数据放在低端。如<code>0x12345678</code>将会被存储为<code>12 34 56 78</code>。</p>
+<p>  ​        由于这里讲到的是无符号的整数，不存在正负的问题，都是正数，所以无符号整数在内存中都是以真值的形式存放的，每一位都可以参与数据表达。无符号整数可以表示的正数范围是补码的一倍。</p>
+<p>  <img src="/2019/12/08/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93/image-20191208201548574.png" alt="image-20191208201548574"></p>
+<ul>
+<li><p>有符号整数</p>
+<p>​        有符号的整数中用来表示符号的是最高位——<code>符号位</code>。最高位是<code>0</code>的话就表示是正数，最高位是<code>1</code>的话就表示为负数。有符号整数在内存中同样也是占4个字节，但是由于最高位是符号位，不可以用来表示数值，因此有符号整数的取值范围要比无符号整数的取值范围少1位，即：<code>0x80000000~0x7FFFFFFF</code>，如果转换为十进制的数，则表示的取值范围是<code>-2147483648~2147483647</code>。</p>
+<p>​        在有符号的整数中，正数的表示区间为：<code>0x00000000~0x7FFFFFFF</code></p>
+<p>​                                        负数的表示区间为：<code>0x80000000~0xFFFFFFFF</code></p>
+<p>​        负数在内存中都是以补码的方式进行存放的，补码的规则是用<code>0</code>减去这个数值的绝对值，也可以简单的表达为对这个数取反+1。例如：<code>-3</code>：可以表示为<code>0-3</code>，而<code>0xFFFFFFFD+3</code>等于<code>0</code>，所以<code>-3</code>的补码就是<code>0xFFFFFFFD</code>了，相对应的，<code>0xFFFFFFFD</code>作为一个补码，最高位是<code>1</code>，视为负数，转换回真值同样也可以用<code>0-0xFFFFFFFD</code>的方式。于是得到了<code>-3</code>，为了方便计算，人们尝尝也采用取反加一的方式来求得补码，因此对于任何四字节的数值<code>x</code>，都有<code>x+x(反)=0xFFFFFFFF</code>，于是<code>x+x(反)+1=0</code>，接着我们就可以推导出<code>0-x=x(反)+1</code></p>
+<p>​        在我们讨论的<code>C/C++</code>中，有符号正数都是以补码的形式存储的，而且在几乎所有的编程语言中都是这样，因为计算机只会做加法，所以需要把减法转换为加法</p>
+<p>​        假设有符号数<code>x,y</code>求<code>x-y</code>的值，我们可以推导出<code>x-y=x+(0-|y|)</code>，根据补码的规则，当y为负数的时候，<code>0-|y|</code>等价于y的补码。对于<code>y</code>的补码，我们记为<code>y（补）</code>，所以<code>x-y=x+y(补)</code></p>
+</li>
+</ul>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='https://link.hhtjim.com/163/1363948882.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
