@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>堆溢出学习 - hackpwn</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="hackpwn,"> 
+    <meta name="description" content="文章持续更新0x0 what’s heap?
+在我们平时的编程中，可能会需要使用更多的内存，这个时候就需要堆上场了。当我们使用了malloc分配内存之后，我们需要去释放掉内存。
+我们在讨论mallo,"> 
+    <meta name="author" content="dh、Catsay"> 
+    <link rel="alternative" href="atom.xml" title="hackpwn" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">hackpwn</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" target="_blank" rel="noopener" data-url="http://hackpwn.xyz"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">堆溢出学习</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" target="_blank" rel="noopener" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;" target="_blank" rel="noopener"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">堆溢出学习</h1>
+        <div class="stuff">
+            <span>一月 05, 2020</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/CTF-Pwn/" rel="tag">CTF,Pwn</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h3 id="文章持续更新"><a href="#文章持续更新" class="headerlink" title="文章持续更新"></a>文章持续更新</h3><p><strong>0x0 what’s heap?</strong></p>
+<p>在我们平时的编程中，可能会需要使用更多的内存，这个时候就需要堆上场了。当我们使用了<code>malloc</code>分配内存之后，我们需要去释放掉内存。</p>
+<p>我们在讨论<code>malloc</code>之前，先来了解一下进程获得内存空间的方式吧~</p>
+<p>主要是通过两种方式：<code>mmap</code>和<code>brk</code>的方式，这些都是系统调用，意味着我们直接去请求了内核。</p>
+<p><img src="/2020/01/05/%E5%A0%86%E6%BA%A2%E5%87%BA%E5%AD%A6%E4%B9%A0/image-20200105114640175.png" alt="image-20200105114640175"></p>
+<p><code>mmap</code>请求内核给我们了一些新的虚拟地址空间，基本上请求的是一个新的内存段。</p>
+<p><img src="/2020/01/05/%E5%A0%86%E6%BA%A2%E5%87%BA%E5%AD%A6%E4%B9%A0/image-20200105114853953.png" alt="image-20200105114853953"></p>
+<p><code>brk</code>可以用来改变已经使用内存段的大小，</p>
+<p>如果进程有自己的内存段，它就不关心这些内存是怎么实现的。</p>
+<p>那么将在什么地方存储他们呢？或者你没有足够的内存空间的时候，你将会发现一个<code>swap</code>文件，进程都不会在意这些东西是怎么实现的。它只是通过内核和硬件进行处理，并且将内存映射到进程中去。这就意味着进程可以很“透明的”访问这些内存地址并且使用。</p>
+<p><strong>这里的透明指的是进程不需要知道内核和硬件的处理过程，就想空气一样，看不到摸不着</strong></p>
+<p>我们可以使用<code>strace ./heap1</code>查看程序的系统调用情况，你将会看到进程是如何调用<code>mmap</code>去初始化内存区域的。</p>
+<p>并且在最后，进程使用<code>brk</code>来设置堆空间</p>
+<p><img src="/2020/01/05/%E5%A0%86%E6%BA%A2%E5%87%BA%E5%AD%A6%E4%B9%A0/image-20200105115900200.png" alt="image-20200105115900200"></p>
+<p><img src="/2020/01/05/%E5%A0%86%E6%BA%A2%E5%87%BA%E5%AD%A6%E4%B9%A0/image-20200105115924864.png" alt="image-20200105115924864"></p>
+<p>那么我们为什么不直接使用<code>mmap</code>或者<code>brk</code>为我们的进程获取更多的内存而还要使用<code>malloc</code>呢？</p>
+<p>为什么我们在谈论到堆的时候，都会提到<code>malloc</code>和<code>free</code>呢？</p>
+<p><strong>malloc只是一个函数封装，用来隐蔽brk或者mmap的操作，让代码看起来更简洁并且使用更方便一点</strong></p>
+<p>我们可以去<code>glibc/malloc/malloc.c</code>中找到</p>
+<p><img src="/2020/01/05/%E5%A0%86%E6%BA%A2%E5%87%BA%E5%AD%A6%E4%B9%A0/image-20200105142321897.png" alt="image-20200105142321897"></p>
+<p>如果堆不存在或者太小，<code>malloc</code>将调用<code>mmap</code>或者<code>brk</code>去获取更多的内存。但最重要的是他会帮我们组织和管理内存。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">internet</span> &#123;</span></span><br><span class="line">  <span class="keyword">int</span> priority;</span><br><span class="line">  <span class="keyword">char</span> *name;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">winner</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"and we have a winner @ %d\n"</span>, time(<span class="literal">NULL</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">internet</span> *<span class="title">i1</span>, *<span class="title">i2</span>, *<span class="title">i3</span>;</span></span><br><span class="line"></span><br><span class="line">  i1 = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(struct internet));</span><br><span class="line">  i1-&gt;priority = <span class="number">1</span>;</span><br><span class="line">  i1-&gt;name = <span class="built_in">malloc</span>(<span class="number">8</span>);</span><br><span class="line"></span><br><span class="line">  i2 = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(struct internet));</span><br><span class="line">  i2-&gt;priority = <span class="number">2</span>;</span><br><span class="line">  i2-&gt;name = <span class="built_in">malloc</span>(<span class="number">8</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">strcpy</span>(i1-&gt;name, argv[<span class="number">1</span>]);</span><br><span class="line">  <span class="built_in">strcpy</span>(i2-&gt;name, argv[<span class="number">2</span>]);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"and that's a wrap folks!\n"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们先来看这样一个代码，目标函数是<code>winner()</code>，我们需要重定向代码执行到这个函数，在最上面有一个结构体<code>internet</code>，里面有一个<code>int</code>类型的成员变量叫<code>priority</code>,还有一个成员变量是一个<code>char</code>类型的指针叫做<code>name</code>，这意味着<code>name</code>是一个指向某一个位置的字符串指针。</p>
+<p>在<code>main()</code>函数中定义了三个<code>internet</code>结构体类型的指针变量，但是只有<code>*i1, *i2</code>被使用了。在这里强调<code>internet</code>指针是因为这三个<code>internet</code>对象没有存储在堆栈上，只有地址，存储在<code>*i1, *i2，*i3</code>这几个指针中。</p>
+<p>总之，它将开始在堆上为这些对象分配内存空间，下面首先调用了<code>malloc</code>给<code>i1</code>对象分配足够的内存空间，<code>sizeof()</code>将返回这个结构所需要的字节数。这里就是8个字节，因为<code>int</code>占了4个字节，<code>char*</code>也是四个字节。我们知道<code>malloc</code>返回堆上的地址，我们就可以去使用。所以<code>i1</code>指向内存中8个字节的开始处。现在<code>i1-&gt;priority = 1;</code>我们将<code>priority</code>设置为1，这将把1写入到我们分配的第一个4字节空间。 <code>i1-&gt;name = malloc(8);</code>然后分配另外的8个字节的内存空间，然后将这个内存空间的地址存储到名为<code>name</code>的<code>char</code>指针中。<code>char</code>指针的位置是在<code>i1</code>对象的偏移地址上<code>+4</code>。</p>
+<p><code>i2</code>也是做了同样的操作。</p>
+<p>我们看到下面有两次<code>strcpy</code>，我们知道<code>strcpy</code>总是很可疑，因为这里没有看到所要拷贝的字符串长度标识在哪里。那么我们写入的数据可能就会超过我们已经拥有的空间的大小，造成溢出。</p>
+<p><code>internet</code>的<code>name</code>成员只有8字节的空间，因此如果真的可以写入超过8个字节的数据，它将会弄乱堆上的数据。总之，<code>strcpy</code>将拷贝<code>argv[1]</code>中的数据到<code>i1</code>对象中的<code>name</code>成员中。<code>i1</code>指向<code>i1</code>这个对象的起始位置，并且偏移4个字节后就是<code>name</code>的起始位置，这里面保存的地址就是为字符串分配的8字节空间的地址。所以<code>strcpy</code>将地址存储在那里，并且从<code>argv[1]</code>中拷贝字符串过去。同样<code>i2</code>和<code>argv[2]</code>也是一样的步骤。他会将地址存储在<code>i2+4</code>的地址，并且尝试在那里复制我们的字符串。</p>
+<p>之后使用<code>printf</code>打印并且退出。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='https://link.hhtjim.com/163/1363948882.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
