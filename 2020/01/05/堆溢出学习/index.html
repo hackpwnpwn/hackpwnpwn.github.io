@@ -10,9 +10,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="hackpwn,"> 
-    <meta name="description" content="文章持续更新0x0 what’s heap?
-在我们平时的编程中，可能会需要使用更多的内存，这个时候就需要堆上场了。当我们使用了malloc分配内存之后，我们需要去释放掉内存。
-我们在讨论mallo,"> 
+    <meta name="description" content="文章内容将会持续更新0x0 what’s heap?在我们平时的编程中，可能会需要使用更多的内存，这个时候就需要堆上场了。当我们使用了malloc分配内存之后，我们需要去释放掉内存。
+我们在讨论ma,"> 
     <meta name="author" content="dh、Catsay"> 
     <link rel="alternative" href="atom.xml" title="hackpwn" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -65,8 +64,7 @@
 
         </div>
         <div class="content markdown">
-            <h3 id="文章持续更新"><a href="#文章持续更新" class="headerlink" title="文章持续更新"></a>文章持续更新</h3><p><strong>0x0 what’s heap?</strong></p>
-<p>在我们平时的编程中，可能会需要使用更多的内存，这个时候就需要堆上场了。当我们使用了<code>malloc</code>分配内存之后，我们需要去释放掉内存。</p>
+            <h2 id="文章内容将会持续更新"><a href="#文章内容将会持续更新" class="headerlink" title="文章内容将会持续更新"></a>文章内容将会持续更新</h2><h3 id="0x0-what’s-heap"><a href="#0x0-what’s-heap" class="headerlink" title="0x0 what’s heap?"></a>0x0 what’s heap?</h3><p>在我们平时的编程中，可能会需要使用更多的内存，这个时候就需要堆上场了。当我们使用了<code>malloc</code>分配内存之后，我们需要去释放掉内存。</p>
 <p>我们在讨论<code>malloc</code>之前，先来了解一下进程获得内存空间的方式吧~</p>
 <p>主要是通过两种方式：<code>mmap</code>和<code>brk</code>的方式，这些都是系统调用，意味着我们直接去请求了内核。</p>
 <p><img src="/2020/01/05/%E5%A0%86%E6%BA%A2%E5%87%BA%E5%AD%A6%E4%B9%A0/image-20200105114640175.png" alt="image-20200105114640175"></p>
@@ -95,6 +93,64 @@
 <p>我们看到下面有两次<code>strcpy</code>，我们知道<code>strcpy</code>总是很可疑，因为这里没有看到所要拷贝的字符串长度标识在哪里。那么我们写入的数据可能就会超过我们已经拥有的空间的大小，造成溢出。</p>
 <p><code>internet</code>的<code>name</code>成员只有8字节的空间，因此如果真的可以写入超过8个字节的数据，它将会弄乱堆上的数据。总之，<code>strcpy</code>将拷贝<code>argv[1]</code>中的数据到<code>i1</code>对象中的<code>name</code>成员中。<code>i1</code>指向<code>i1</code>这个对象的起始位置，并且偏移4个字节后就是<code>name</code>的起始位置，这里面保存的地址就是为字符串分配的8字节空间的地址。所以<code>strcpy</code>将地址存储在那里，并且从<code>argv[1]</code>中拷贝字符串过去。同样<code>i2</code>和<code>argv[2]</code>也是一样的步骤。他会将地址存储在<code>i2+4</code>的地址，并且尝试在那里复制我们的字符串。</p>
 <p>之后使用<code>printf</code>打印并且退出。</p>
+<h3 id="0x1-编译带debug-symbol的libc"><a href="#0x1-编译带debug-symbol的libc" class="headerlink" title="0x1 编译带debug symbol的libc"></a>0x1 编译带debug symbol的libc</h3><ul>
+<li>下载：<code>https://ftp.gnu.org/gnu/glibc/glibc-2.19.tar.gz</code></li>
+<li>解压</li>
+<li><code>mkdir build</code></li>
+<li><code>cd build</code></li>
+<li><code>CFLAHS=&quot;-g -g3 -ggdb -gdwarf-4 -Og&quot; CXXFLAGS=&quot;-g -g3 -ggdb -gdwarf-4 -Og&quot; ../configure --prefix=/home/nick/glibc-2.19/64</code></li>
+<li><code>make -j8</code></li>
+</ul>
+<h3 id="0x2-Glibc-Heap-Overview"><a href="#0x2-Glibc-Heap-Overview" class="headerlink" title="0x2 Glibc Heap Overview"></a>0x2 Glibc Heap Overview</h3><ul>
+<li>是libc中负责动态维护内存的一个结构</li>
+<li>libc中比较常用到的就是<code>malloc,free,realloc</code>，在C++中常用到的就是<code>new,delete</code></li>
+</ul>
+<h4 id="0x2-1-Heap相关的漏洞利用"><a href="#0x2-1-Heap相关的漏洞利用" class="headerlink" title="0x2.1 Heap相关的漏洞利用"></a>0x2.1 Heap相关的漏洞利用</h4><ul>
+<li>Use after free</li>
+<li>Double free</li>
+<li>Heap overflow</li>
+</ul>
+<h4 id="0x2-2-Glibc-Heap"><a href="#0x2-2-Glibc-Heap" class="headerlink" title="0x2.2 Glibc Heap"></a>0x2.2 Glibc Heap</h4><ul>
+<li><code>https://code.woboq.org/userspace/glibc/malloc/malloc.c.html</code></li>
+<li>要做到内存的管理，我们需要知道：<ul>
+<li>有哪些位置的内存是可以被分配的</li>
+<li>有哪些是因为<code>free</code>掉而可以回收的</li>
+<li>有哪些位置是使用中则不需要记录，使用它们的人应该记住这些标志</li>
+</ul>
+</li>
+</ul>
+<p>真的会去做<code>malloc</code>的是<code>_int_malloc</code></p>
+<p><img src="/2020/01/05/%E5%A0%86%E6%BA%A2%E5%87%BA%E5%AD%A6%E4%B9%A0/image-20200121142823500.png" alt="image-20200121142823500"></p>
+<p>但是平时我们去<code>call malloc</code>是<code>__libc_malloc</code></p>
+<p><img src="/2020/01/05/%E5%A0%86%E6%BA%A2%E5%87%BA%E5%AD%A6%E4%B9%A0/image-20200121142923761.png" alt="image-20200121142923761"></p>
+<p>他里面也是<code>call _int_malloc</code>，下断点也可以下在这里</p>
+<p><img src="/2020/01/05/%E5%A0%86%E6%BA%A2%E5%87%BA%E5%AD%A6%E4%B9%A0/image-20200121143048543.png" alt="image-20200121143048543"></p>
+<p>free的话和malloc差不多</p>
+<ul>
+<li><p>整个Heap的东西记录在一个<code>struct malloc_state</code>中，它叫做<code>main_arena</code></p>
+<p><img src="/2020/01/05/%E5%A0%86%E6%BA%A2%E5%87%BA%E5%AD%A6%E4%B9%A0/image-20200121143623638.png" alt="image-20200121143623638"></p>
+</li>
+<li><p><code>malloc</code>分配的内存名为<code>chunk</code>，会比要求的大小要大一点，因为需要记录一些维护heap用的额外的信息</p>
+</li>
+<li><p>Arena和heap分配的内存是分开存放的，heap overflow没办法直接去覆盖掉他的内容</p>
+</li>
+</ul>
+<h4 id="0x3-Heap在malloc的时候会发生什么"><a href="#0x3-Heap在malloc的时候会发生什么" class="headerlink" title="0x3 Heap在malloc的时候会发生什么"></a>0x3 Heap在malloc的时候会发生什么</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">Malloc</span><span class="params">(<span class="keyword">size_t</span> sz)</span></span>&#123;</span><br><span class="line">	<span class="keyword">void</span> *p = <span class="built_in">malloc</span>(sz);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%p = malloc(%ld)\n"</span>,p,sz);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Free</span><span class="params">(<span class="keyword">void</span> *p)</span></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"free(%p)\n"</span>,p);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">void</span> *p,*q,*r,*s;</span><br><span class="line">	p = <span class="built_in">malloc</span>(<span class="number">150</span>);</span><br><span class="line">	q = <span class="built_in">malloc</span>(<span class="number">150</span>);</span><br><span class="line">	r = <span class="built_in">malloc</span>(<span class="number">150</span>);</span><br><span class="line">	s = <span class="built_in">malloc</span>(<span class="number">150</span>);</span><br><span class="line">	<span class="built_in">free</span>(p);</span><br><span class="line">	<span class="built_in">free</span>(r);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后<code>export LD_LIBRARY_PATH=/home/nick/glibc-2.19/64/lib</code><br>使用<code>ldd</code>去查看是否成功<br>使用gdb去调试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ p main_arena</span><br><span class="line">$1 = &#123;</span><br><span class="line">  mutex = 0x0, </span><br><span class="line">  flags = 0x0, </span><br><span class="line">  fastbinsY = &#123;0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0&#125;, </span><br><span class="line">  top = 0x0, </span><br><span class="line">  last_remainder = 0x0, </span><br><span class="line">  bins = &#123;0x0 &lt;repeats 254 times&gt;&#125;, </span><br><span class="line">  binmap = &#123;0x0, 0x0, 0x0, 0x0&#125;, </span><br><span class="line">  next = 0x7ffff7dd7620 &lt;main_arena&gt;, </span><br><span class="line">  next_free = 0x0, </span><br><span class="line">  system_mem = 0x0, </span><br><span class="line">  max_system_mem = 0x0</span><br></pre></td></tr></table></figure>
+
+<p>刚刚我们看的是<code>malloc</code>，那么<code>free</code>的时候呢，会发生什么？</p>
+<ul>
+<li><p>回收的<code>chunk</code>用<code>linked list</code>记录，成为<code>bin</code></p>
+</li>
+<li><p><code>main_arena</code>中有很多个<code>bin</code>，每个<code>bin</code>里面存储的<code>chunk size</code>不同，目的是让<code>malloc</code>时可以更快找到最合适大小的<code>chunk</code></p>
+</li>
+<li><p>回收的<code>chunk</code>会按照<code>size</code>来决定应该放进哪个<code>linked list(bin)</code>中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">main_arena&#123;</span><br><span class="line">	bin[0] (size=16) -&gt; chunk1 -&gt; chunk5</span><br><span class="line">	bin[0] (size=32) -&gt; chunk2 -&gt; chunk3 -&gt; chunk4 </span><br><span class="line">	bin[0] (size=48)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">

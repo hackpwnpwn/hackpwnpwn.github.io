@@ -5,16 +5,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JSON-RPC - hackpwn</title>
+    <title>ichunqiu答题第四季 - hackpwn</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="hackpwn,"> 
-    <meta name="description" content="
-
-function doDecrypt (pwd, onError) {
-	console.log(&#39;in doDecrypt&#39;);
-	const txt = document.getElemen,"> 
+    <meta name="description" content="Webnani打开题目，右键查看源代码。发现如下信息
+1234&amp;lt;html&amp;gt;    &amp;lt;title&amp;gt;Where&amp;lt;/title&amp;gt;    &amp;lt;a href=&#34;./in,"> 
     <meta name="author" content="dh、Catsay"> 
     <link rel="alternative" href="atom.xml" title="hackpwn" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -40,7 +37,7 @@ function doDecrypt (pwd, onError) {
     <div class="bar" style="width: 0;"></div>
     <a class="icon-home image-icon" href="javascript:;" target="_blank" rel="noopener" data-url="http://hackpwn.xyz"></a>
     <div title="播放/暂停" class="icon-play"></div>
-    <h3 class="subtitle">JSON-RPC</h3>
+    <h3 class="subtitle">ichunqiu答题第四季</h3>
     <div class="social">
         <!--<div class="like-icon">-->
             <!--<a href="javascript:;" target="_blank" rel="noopener" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -58,55 +55,25 @@ function doDecrypt (pwd, onError) {
     <div class="section">
         <div class="article">
     <div class='main'>
-        <h1 class="title">JSON-RPC</h1>
+        <h1 class="title">ichunqiu答题第四季</h1>
         <div class="stuff">
-            <span>十一月 23, 2019</span>
+            <span>一月 17, 2020</span>
             
-  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/JSON-RPC/" rel="tag">JSON_RPC</a></li></ul>
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
 
 
         </div>
         <div class="content markdown">
-            <script src=/js/crypto-js.js></script>
-<script>
-function doDecrypt (pwd, onError) {
-	console.log('in doDecrypt');
-	const txt = document.getElementById('enc_content').innerHTML;
-	let plantext;
-	try {
-		const bytes = CryptoJS.AES.decrypt(txt, pwd);
-		var plaintext = bytes.toString(CryptoJS.enc.Utf8);
-	} catch(err) {
-		if(onError) {
-			onError(err);
-		}
-		return;
-	}
-	document.getElementById('enc_content').innerHTML = plaintext;
-	document.getElementById('enc_content').style.display = 'block';
-	document.getElementById('enc_passwd').style.display = 'none';
-	if(typeof MathJax !== 'undefined') {
-		MathJax.Hub.Queue(
-			['resetEquationNumbers', MathJax.InputJax.TeX],
-			['PreProcess', MathJax.Hub],
-			['Reprocess', MathJax.Hub]
-		);
-	}
-}
-</script>
-<div id="enc_content" style="display:none">U2FsdGVkX1/NsD2blOf/UDw7GOyI9JTG7JJ99HDKR3CjUeY5vWN5h0blkuFVnXnFfhHDjJOKZPM4Gz4HdqVXq0vMCXVqvrrR7Qq1kKupZ4/fm0imgW/MpWLM31y4UsLnOKNND2hsmnhe74azEc4jNPL914iyJ2W2VyizJhtPVCWylth4DpKBIi/jhOQsqWg0WDQ02ce8traRZRO4ISqG5+wvSgiF3vaUrmwjIHZYx0DofLdmL5+PssLdcs8V47yQZMDKX+ptaSiudku+RWhd1OIKT6Z9U9KoM7NnsZV19zyFXyCZirbmCqkysCJ6FDIG7c9eiFEHkrCQQXnDYCo9UJD8zylZEQTK/Xym0Q49igi1UrH7atUV24g73ifu1mFLnlKLpFP3oeMzeb43rbKsh2pHtzCRNzmdmriiAtl8y15DYsqCzM7CErsiJtfvJRZ5p/2yW2kGsFBtybPT+Gds4EklXS44Px4C9IbTcwEnUkp7G0gObZtsT5Z+qHbUoIf7cra0W5JcKClGpY7KnGRkk17ItAdfvTN7M/VjvYJ+ma0qb5HxifhwXX1p6TVKSCgXf4+cLwPIYFOvYMCJpD3dB6ZTnaBI7/GjBZWZE+5c/9DeQd+TRnkZPzICiZrK1+uNOLwTkgtQLjipAcBsD4cp1lvk+fnQ9KvCUaxdmE0nR5PtdjrfxxbuZmj8gxNRgTu9PVcrr6JMF6K61aci+Zt2G0TdFNVQjqF5qI0LWkkEEIkW1ICu868ozeaRALWQpji6ngR+13D6haOUQv3z+JR21SaSxaax8Y3fJ+xAIUuDyUmbYWjbHbubIythjEfB9zCdit5Pz0i6hWVyGFOvA+Qiu6T9QnWYOjDoM3zKlDp6+YV1bJBXKFvFO/Hk7SVtPk71eCBiR4IzBEAj/kBDdU6qLOvN8s76aPPnVZ1uZ67OXlIhQzozcKOqeOiLNCuhtP71K7Zuu8wwprV68ekAiwD/aExabHYZZEdzGU42YDHfR+GQ42YBzLVnqOVis4YduSxosA7/hPExwJeJBHSPEm+37r1SVzdFB84jS5R2Y6O8pRYziqt6O+16MSVUUGSi39/BSsyPqXxf6gI/ibiFOPgvEMoC2/xSz/iOYddka2vi7EaRIxXrjn7UDeZXHL0qD5ZP7TK8O2ft59BURzpYtSkByzpv6kG/4U8CJRI4BogWfPv9/s85RyycUibTUva7S+k6SUolPvU2qe2NUw5Rlse/hSsithALrUYkuGIDgiWcgLK+EfNNWLHw5yxByR6Wh0+FbCFET9klOtRX80qQ1hHMMAQ4lckv+DJVFefjF2dc8XbdiJWvOT4TOTjXOAoc8u3Z3i9Sw+HLKiaE2Jo6sOkpVXNRslXpcTUdT8vdtOx75E2EJ8T/sR3rLmZyr6TD3+uOoQUPg6/1/9DkqZyZ2hBGQKVTo/tk/EHwaI+9jR7NFIW9WpS0LLBTHWFCnOckZV6YOTcxFpqO8fxWV4cA+6FqVETB1jG+1+DXa7Vs+LQu1lbN27ulmJoICwaxb0gvTyTldS+Za0RT2n/raEF4ODhSmamV5ysKKFeWgvuD26wdo6ec61xKhvZnpJEgmHat/SL6MCaiT5s/khorB9Wl7P5HPUNoVUHzlLe0s46Z+YpVYLpENj/frJEEIeazsAAAdrHfan2XM0N/mUJNFGVOFNC/nxJFYuZ5c2XUq7X6RrT8WkIsR0tuRKL9x9jK9y9cp8+xRDtkJJUNlzc27agyuempVZMx9kn+APcYLqtA1/r6JMiC6mekZCfLac0cY6lVuFuEL7EXQLTb4pj8+e3VOkpvsJvXDZZFusjiCWBdw/dgPawU8qzm4Mi2p/W4GxldXrmJj5NMpoQrg37FWSjlKieJsJVUkyeVGWRqjrOvP/OMgNthkMaJ6NlgKUsa2FDWeO/jCShr1nD18RsJI6GlNsNRPg==</div>
-<div id="enc_passwd"> <input id="enc_pwd_input" type="password" style="border-radius: 5px;border-style: groove;height: 30px;width: 50%;cursor: auto;font-size: 102%;color: currentColor;outline: none;text-overflow: initial;padding-left: 5px;" onkeydown="if (event.keyCode == 13) { decrypt(); return false;}"> <input type="submit" value="解&nbsp;密" onclick="decrypt()" style="width: 58px;height: 34px;border-radius: 5px;background-color: white;border-style: solid;color: currentColor;"><div id="enc_error" style="display: inline-block;color: #d84527;margin-left: 10px"></div>
-<script>
-var onError = function(error) {
-	document.getElementById("enc_error").innerHTML = "password error!"
-};
-function decrypt() {
-var passwd = document.getElementById("enc_pwd_input").value;
-console.log(passwd);
-doDecrypt(passwd, onError);
-}
-</script>
-</div>
+            <h2 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h2><h3 id="nani"><a href="#nani" class="headerlink" title="nani"></a>nani</h3><p>打开题目，右键查看源代码。发现如下信息</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Where<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"./index.php?file=show.php"</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>猜测为文件包含漏洞，访问<code>http://120.55.43.255:24719/index.php?file=show.php</code>得到<code>user.php</code></p>
+<p>通过<code>http://120.55.43.255:24719/index.php?file=php://filter/convert.base64-encode/resource=user.php</code>读取到<code>user.php</code>的内容：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">convent</span></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> $warn = <span class="string">"No hacker."</span>;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">eval</span>(<span class="keyword">$this</span>-&gt;warn);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">foreach</span>(get_object_vars(<span class="keyword">$this</span>) <span class="keyword">as</span> $k =&gt; $v) &#123;</span><br><span class="line">			<span class="keyword">$this</span>-&gt;$k = <span class="keyword">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">$cmd = $_POST[cmd];</span><br><span class="line">unserialize($cmd);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>很明显是反序列化漏洞，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">__destruct()：当对象被销毁时会自动调用。（析构函数）</span><br><span class="line"></span><br><span class="line">__wakeup()：unserialize() 时会自动调用。</span><br></pre></td></tr></table></figure>
+
+<p>这个时候我们就可以去写POC</p>
+
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
                 <source type="audio/mpeg" src="">
