@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Laravel漏洞详解 - hackpwn</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="hackpwn,"> 
+    <meta name="description" content="
+
+function doDecrypt (pwd, onError) {
+	console.log(&#39;in doDecrypt&#39;);
+	const txt = document.getElemen,"> 
+    <meta name="author" content="dh、Catsay"> 
+    <link rel="alternative" href="atom.xml" title="hackpwn" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">hackpwn</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" target="_blank" rel="noopener" data-url="http://hackpwn.xyz"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">Laravel漏洞详解</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" target="_blank" rel="noopener" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;" target="_blank" rel="noopener"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">Laravel漏洞详解</h1>
+        <div class="stuff">
+            <span>二月 18, 2020</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Web%E3%80%81%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">Web、代码审计</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <script src=/js/crypto-js.js></script>
+<script>
+function doDecrypt (pwd, onError) {
+	console.log('in doDecrypt');
+	const txt = document.getElementById('enc_content').innerHTML;
+	let plantext;
+	try {
+		const bytes = CryptoJS.AES.decrypt(txt, pwd);
+		var plaintext = bytes.toString(CryptoJS.enc.Utf8);
+	} catch(err) {
+		if(onError) {
+			onError(err);
+		}
+		return;
+	}
+	document.getElementById('enc_content').innerHTML = plaintext;
+	document.getElementById('enc_content').style.display = 'block';
+	document.getElementById('enc_passwd').style.display = 'none';
+	if(typeof MathJax !== 'undefined') {
+		MathJax.Hub.Queue(
+			['resetEquationNumbers', MathJax.InputJax.TeX],
+			['PreProcess', MathJax.Hub],
+			['Reprocess', MathJax.Hub]
+		);
+	}
+}
+</script>
+<div id="enc_content" style="display:none">U2FsdGVkX1+yidVFMDwNT0BOP8ah2Uvw8bmwxgmfYYSy/5sBy3oAyThz40fTWYfj9diaHMU2UwF1EYvUhX3qKPShho0M3agvaUbhS8ZpvENFec2Tql8NNlBbPWI6SwTZtytqy7KXXY/X/5hQwSs2gii0Wtj87cu/XnLAwSnmto+Iliml+uL5uDoL2bi+IjZirqe56ONdc5pN/Q8Goofm3x0TS2P4TO6Rj63f4rsVv+mi2BWPRfet/8LqXJHG52yMlysF7CCwjQBX9+gzgtIrF4KohMUq3YU6swjvKIfA/00Io5+bhUIdnzBCdtssBEfrEZxSv/60YPnDN6EpYsyihCV5Bg+NBaDKTwTJXEJv8BaF7Vlnsf89MSZ/F+sTpBetvhYQl5wHVj49reVtM0TOvQ1hjb02imVjn3tm8sMMgUXwwlTdt8hVXStokx+rePj+AztEYrWmWVxcSIjqHs9m0i3UVghkZdIYdwW1OOguFBIVK4YHnkeRegNhX6iPVxXMYb41DVsFKixERTPvk6hfxq8N7Y6FCpLv2yJiQ7maf1cx9BVn8dDRTM/60sX96Zgp3vD693/txRe+5GLLfBqnqXyrOm0K7V2ZyziHgoRg85s1TIe0KUdKcIWRLkVkF80W/Wt8u2Mac3/M/skYSmaAeG920FZI0QXd18QTzu/YiQ7YmttOh99CsYX5zcHxq1j9NqK+CkvwmAM9f91W46F4UGjLIkQbj2bAkZhTL1n83RKAtH89pNVqVvQPZhz7l9ervPtTZ7pJsqykoVX5C7b9ZMtX2/7yyQZgcxQ078JK5eOSC2TMElmb9sOTItLUbPskjHkC/LEyThKwndpFnG+Q6O1/kYq0EjWat0FI4NfsP/4pyS3djv44Pg7Vg9MSl4Q7cjDOaZYsEC7Rn3czFoSKqEwJv9S488zYu+L3VyGTH9W6vS+ey09DQRgYMnAqPeK7UsWAogyb3FPE+tsRKrN1T3L+eVs+himS9isDKl87Nt4SkQok2O2qB4wjqWMAfDVvri58PEGFczOIvY+WQG6mPUlceeSx6UjDWJfoa63anDhAWCK8fB6UKr633drGBLF3RSrGIVZo3+K04PG5yz7hFCYi3LvaQSuDnOrk3URLOgN5KmH5XhZPeyKFqjbS2m02wWzZhoB+qkPXKI0olVw7URN/4G1iL/9PyWS731hjhfE8Xz9l25xiI+fG3+fhX1SEWhbcX6+iYjOYYOKmEM963TYL0NND8AAiWS6kwmJOJUP891nnycZtHT3gCxAP7HfGYSEt+cFvKTDlxLQ5mmt2ofnsZrzL42obyzAUyYeKCB25VhisFjEu779eamzVQaQ7Ag0H3TTawDt9ZVGlDqaFYhs+yqSPCB8hv3C2c/c9oEi1Ds6LtgmgotyEZgzMIvI8pK+cIFQ3X0CrdLJ7e+hKOguhew5gtSS1EOTOo8PrmyfCSRtYrYhxk59GuFHT4VNw4C8kRSB12bUHFZWRcwV8mp4LcuOExiw/+FUJhnGq6go7kzACA+5OiVSCsYwvDQKCzi43qc4F73Dp3tE6Ccp9/QGmFkkTqT58VS5OT+hRkfVHKnK/i3UiuuK5mpbqUuPVdAO8T8InJrJi76Fi9YbvLge9OoLqFcVRDyyVdVwCO+ZpwM15G3W5Ek5cQI081yoIOdhNnPlHmvMOEyzS3n0+Waj929UpmUSvrf58GC3Q57LHU+ynQ5xcMx/vWLE4W7kTYr7ZodL72tqY3FbC4rhI6zI3apXHXcNwhYZnwL0l6OmXlFH0AOrUcZ7G60f4RNPIih4fycm8JQtFwkh8Gr2+0OjPYXN+pPQVasLyz9HgXc2i27vxam5IEVTkRCwREyRr12mYBzPZvVWSSyjRiAttkfuFIWRzJst+n9IFQMiNT3CREqFJENKsvWcLhQK9NkzNyYu4f+OGuiL5jNq5mEEkZQmVtLBEoKbRIXjAr01Y8liI01mdEPUCibTkolyXmYw244xMPF05PS60GoVtri417FqHwqPTV0Qpkzbf/m9CQd10E0O389pDy9WJQG4XcawWQv+2oEj0HTv/PH3syGNdMoACWLhI8bvUkexphbmBGplkqCQnYFRRYfPuoGMrr7eERJVx84BLFMDkUL7zl6jVIExWtPjJOQI+C3SxNfBcwhB5TpSciV2L+euCYzJFidPqof8BDC537IJTQljeck8DURie5V8S1UIi3JsTIDNOa4RHeBgx/6XRJ3jSloqJDU+6kVtQE3yhVu2E0XqmxWRpn5ca82pQtYWj4AuO/Tevjk2tyEYdvBLNTYKHzfSUGt1DWeI/pJZvz8NvITpXDwavXXyxE1I4u2xcgXjNPMD2S+HAqs0m1O9VwFFGUhpX8PU/varcuite038ad77G7wK3ejrx/dKfRrREpGH1v1PeRGMJr2Inmsm4Mj1EyD6tm6+Cp00v7k2uQHyfiMqLVTAjPzS8YjS5eWVCJQ5BW9w1aRaD/auzjWEDgVzopqaF6C4jwK/mUkBDrOldv0/te1HbV4N/UqEldlhQDHDco/I2nOp9BAgEu+9E4ZAZNVuk5wZ5L0OpHyvay1+UaS9FqNEHrn9fwITvyLOcnkW+AsOStPtYYWUEaFNQXmOSyrMO4c8haPkI41mMyz2OB1BardxK0dYc8uXpq0mau2pbbdbz/T7dlLnztvNYSoWQUvxLhzbpbO+umXRpdkp5jOrWaycENZlGdX00j446wsSf9orXFwKn4xsty5q+z0663UbvoxoPhIqwTlwD2/uRZJPSVn4xHdF6xPNN3baFqSCROgYD+KWQuY92ni/qeZzVedcScgNcEZgbL6NWUi7W73f8hS7L9oQGkW5X6s5j79v/EY1pHf/SXAIK3kYLqKqsEWdK0mufxl31aoTaPCkrG7BKJwRzPgjAt+7RBjOfeqbb/K3VFoy6J7ntpfK9lfPvYWXcaezvEHhLbY+3FEycfU7PKNDFVYtqksZGrvagJz4XIN8cbOfdB0dCBREFWtY8viZv8tAOG2ZGGxbu4aMH2D1iqqDhSm4eCNBusn5fNCUlLD+Y51fBKSy1UHL3RXQFhTz3PRGrI4PbCC/6bzkft3EzYwoqvzytJ8E/4k4MjaHU6KZ6uHFkgtXS0us1uNcNVmf7ZBjZODJm2VQLXIVADgm39EPqeFQ5v9iU91elepBmZue3A0aHvIp2pjDi52Z/wLJ4KIt+70ZhVO/lVGJ28R/qlc7ZwV9Pwx5I2+DUB36WuhtJfQjXJ9xbKeTWZ3FQ7ZWjuZ/Tg6Iw9aYJVbhP/ccxW1tRGJhPwd0yBhR64loGbCvKkrFJ/h8FXa6hhAekBGTRGGPp4KizQ76ULJVanIcrRHSWLi4OBcQWRfNGRQRW6VRRmvYN0UT9awJjJ9W3GvVpcUw/nN0nkTkYSLPXTlwebuefF/aF4y5tt4nyMd2Rw/VX1LuJ2Oq5uSlITvvg6OEi6xzOzR5jodo8QSvc7IZUDaImvUo+lnn++uUdfQdYvC7aF+Rsr5kKtxM/6E9+zmpe8Lb71RGrlChXXS43Qq94Db/kQvYOHnuUMl+y07vpvwOy4rcP7VbNCJj58Cf3PXhVDP3lBCDDK1X3tWXx/bWKkTM2rdzeDu+TTBPGjbg/s0R1kr1LWWNaPnbpJuHIZiRpu0Hgx3q9nSPUM2Oppk827mKK9bxAahHppPrOGccbU7nWHwormsHCLfZntZChofaQvzM3KaPnFeYZ30T2us25O7+a3Hu5cdVhP/dRRrm2ClJcoKta3DGP8anqOG9Gqs+3NClAmcvV5e7pDf1WACr+g70TJ99i9lTGdEG36RqOW8bRv8TTlE82ZBdSiDOMlPg6+uXZu4K3KG8rjZwE3HMlUGSYxFTWIgtn6Lr/CRwq3+3uXKLW900Un25vxS9p1TMcWBevbeZYgas+9zOTrY2az43WyWmc8+0Psth5hm0vtLHVi24ZjrThnXQPbaARPbZjQe3l3QoNEligVvUcSmEG8pN1g+TcLv9pmwxqdzl2rc/S3xzuQ4v+6Wu0IdkZJC5QaI7WMHAcJfdpLpFHOLEDw2vFa+pL2W9VX/j1VWKSRGeCWy+9l+Yg1es3KSfpRtOgSjB/Tw2tGul6qRTTm2utxENNHKID971WEGU8U2VrXpybf4ELLba00QBghFqBqsHjBw0ikWUBV0j5GExE3Unxb08Z8OcoNN5tplWbyYS+IZQSzbsGcChviBb7QdyZxNKy/hhghchO1zGF5SHrbuhre3Zn6xJ9TacxfzcUcR60kFsHSKQMA4B40VDYKOjj0vf1JAt/RQfIFoMBHEEa39t1t64CXlczAkQFRamCndQZgUFSbCMb5EjTDxbVewU1i4R9U6ULMwSpifIk/7LUDsxaHI1DQsu93TRyI1o5f0FgwbsYRpXmso+hndtivhyjK2qYLCpsn4l+uggSozVvR5e1VQUYwJ4BbcWJEsPJERUswuLpUKhiezana9e76bQMEzbTEZ4sdTA+Jpc5qx+ZnhMmZ7tMQndccs/PbvzUW2xA9e+K5Dao4AgTWNg7YY/RbGAAMPNTjoXkVSOcwP4kHk4e4OMOFJ3i1wNKVS2xWVuZlod4YGZxqBJ8ogqYyWdIuwxw281rzNdGa2Nav1zuHEyyFa4iEOAZtyTRQxBU2tZklKokFn/YuwCarxq0Rrynhbn6uyXczK+SigI0FJ2RRzZHkj+c7mY+EelKRElSKAC/rWieQOKQsLLyTJhmqINlhquunUZtORN8kdf3H9cpj+mcKaVTFDXHYP+/Ax3+cxkn8loc6s9dBaMV/tH2Kye3r5JTDddUvopHpDyNfrta9DOknL5SJGp1GGNlGY9fGidVsYEKqmnsnsu5gOM+BBGp7oRukcGVxKpV87AcBJ3IP0gyWxfKRFlD88YAgk9bhmVYton8wq2ymbyjaDSSuSzq281KPludaHt8c8DqUEWBD+G+i8snh+Ojm0p8Sdd4z2sQpP4rg+kXyZGBTnqDRy3rZWF5807GHMMSugVGjQSWbSwEjPSwL+aKQL3E1Uq+7/qlJpo2lVMxVin9rGU5uLMK3K/oWIKD6suQaz2AAxoQLCKfwjJAX+t0pK4jK+cYl0LzwEje2/Y2Nfev5p9ecsXYZrfoFCbFjpOs5f0P7NLUzxlHjim45cT0nY4lMD0ixtQKSvC5vA0+ovj9YAnRgxFgBPosF8yghMBAto6jdZTrvyFdehVGaDTSvoxEtDEGWVKx2R6LxVEa03MoOc6aUPoWrQQXKSH3ehGtrzOBKT7ztekPHALm5Xd2GONNs34g/6YUK1bGqyIiy7ssvOjV7PqsfXOoG24JC4sNY7DCtgB7/3Z1CZqoUARgJSE7rxFic+traWVaCgj9kyZQqX1xtPQB4iz0oqUUyY5THHlBi3FOvVzzHzh5xUIMRaYo/nIF3H95HI6EGQ4BIMpQfdaojYcF/mefGi6YjjZBFN6xU7LoJYR0OkYWVeZ7Y7wCu1sluMNEr0AxijcEre7K0f6vK0vEwqU6ZtcB7u/m9eyWwlDyyY6R5tM5ko6KJyPT7codctzBMe9NLa/TxU86lVmG12znnZ1BZr/K18ArH6AFQ1TP/vYicN2rIo0F+O/mps5wY/8j6lqI3k5WovIftSymsk+5MQDqOrMUwZicSR85rMMolCQviocGofH7yIVExRvH+78JOHuHvLE0sOU62VUMHmplGiwfsW5JsfwLOszAh2EfzN/Y19zkY4GISKJOrJ2N00T6TwszOq0zP7cCG8XAv7hf478Eoh7KNOKIA5GPn6OaJ6ofoji4qgGvzUhouWBcpP5tlZMU0VhSKDOTtUSMamcMAx6ABEmoMD4eOeDFPURbvKO7CD3z/97tvlKPV6FZ1bOowa3R8PlC3r9mP2TmZ7jG78y10918AWy2UY6M938hctqZJk3AvHpXA9bTtrGVqxPQGtxEIDMjXyuWBn2hHJUNERBtaCuFBWX6uMuBg2rbsu5H4K2K4MrMOF9uz8xvqH0Mwbc1OOUWeQvaTPzNEIfDcQK5CKVoP7ZLGSri7N+5NBz9pol08aC5swGDTsKGBj2/d0wztK3bTv06+ARD7augkC0NCEvI5Y8zlwOIsBl9eLTIktrz8IJrfdByDuHXEEasoOdxuwcSYUNAb/LaoDs9MjXaek+3QIkmUCUKwckuHX2thsCtOU70CKm0yVfzc6J5KFhhY1iHPMGncQ8yM/0mlASE1EBWOB/H5ozvZgFG7+s8Ko6F1jIq4c/uv6o6mTkX+sVtcrbDXM/hnmz5yvYFn6ghRbZ/MHLj7wDGOp3O6lGtVqmW2qMI6NMfmUSmvs0OEZbMHowwr7VQsGX1XKkzPBd978Kdejz5da+kY7pQ05EuJvisDmkrmiKxgmN41VzRuv8GkrOtzFH0haSGyFE4NM3hkJC+VZQRiWSEggIBdmgAH/fY1H9JWHZ2q3iFQVh1dfD5gwCv8pmdCZR9Rh5nWYs5pT2OslPqO0f4CrhLNIuS9bBcESE0sBoNeKVCeLNyoEUHmCChctpOYZWXVZH8dZYtzoBm+hYK/FkaSfZfX4KToZ+9XCyjVJmxNggIBlgCsd0rQq8tExoyAHvLheY1Qr9BzZBzpeSa4fLNSqj8ASTF1B4+LxG3kts+G500EyQCtGOmspcPlrAQQU3v2lOa0R9/ZarBhyLY34WI7aq03Vrm+1lrN7RRzRw88DCZvQ1elblC5gtP1wa7o7j/m1I6Tr7l4FqWVVCi0gKfRBdLxT/5GOkb7fYCLEtTFbeu6zLQnTrwHM6CJRty1UWDSAWDYzoLl07KtH+/M/UFneFn9OrqFyBiBM4HKfb7Md0lcHnSPKNeo0R4xD9WIu7HZEF5uw+UI9NNTNOA9Pk4I1V3vzzMT6ny5MzD0qZzSiW8TcjuGRE3bGXYtvvaMkSdX/15MhoXZ4RcZh0o4ZPGcEGstpCgoBo5xb3o2Idl0BBZnUus0S8eFak95CvCwFc9pn0SHVfxGPyLkpsntGVNHZ4WNSwXONL3Wz8DVrkJNacXsEDt+HJ0qk3vid+iAn6MSbThN/9NgqMdaTX3jHGwuZB5NIDge+roFLiCwPG3NfQZC3QyquvOJm6AJDb+gbpW+Usv5ImccucqyRO87YQJRzlXRWxPAl8+5UGEQdkUSIEsgaPQuY98M5exkxl7JrJYXLTF9Oq/u6+urejA3CN8TcDJnsW5qelre1r6ltB7XNPlBABIEjLwvr1jiS9jJyrQw//iYNccJBTgrhCrT1ue+H5DwIveBL1T8+OyN6tWWyvALxkQnPsPen4jHFCLySAzGRT8sut8JekixstDID4GVAxDWov6JFYGSkEscdH7ci3Z2toAhL3NrrmQhpISf1cVOYOKiHtwMwWn9aRWcg3yZ4N1q4IqEz6B8/9jh5whbZmgIdyaIP3SIRPFbKTTrbUGae2Mijfb5DmAROfMEXL9OMO27PNyGbFAjQkRuiDgRKNVANkghdW69qQ1PSk4d0mZx4/A+NZv9DobiC/PyAcoSSkuIA8UNAYLq+95nJbiYT8fFvI2ED0IRw/8Fr1E1H09xOvYp6ZDWBXQ1HgqSqbts1bLLRLS6/AIanW0MzlJhxi7VoCBAWlZexdsl0uL0LROs51d/chgUPEEynlv4qb6kZCYgko/tVSaF3YVZXKeMndkLb2fUDvcnxsN1bx9IZqzilxQu7OtjwEZrSpxR41QKWoKkHuDWkcw+wv+yEKh0efNwXCL+lugL1jTdjQhRhXlJpEv45kz1dD3d9pto8EzxJlT0VTsdvL3LPhbNZJ4gDfQbQGdiQzfxHW17kbYbIfLLyeVP1ZogBJRxIaap+PMVL5WeyrGrAN3itrM4q/8jP7TYz5RRAGFJGPB3v5D6dKVvAoi2/gll2KbnCbeAOxo4vXjRmGgHXp5rXRHkua6p5Qa+BksIKt8n4PgNkF/TSn+wBQZIbP63FtRvEINRlFpPQOQb0yzFLF02hMsY2jTkMMEH4xmhVpzkG06sLh63kGFdQP7z+OhEKvDzILlreEE+NQAsPj3AexYSa6ihvynXrug7BGglDtDpsnyMJ2Cs/ylVVnmLaL/lK3PCcIl/wPx0NVNn0DiV3IFIxZGjMbtpBOtKAaKCFUM2A5CtIr4Feu433BY8TO4nwJLt+4Z1iVoChOMt1u0EiDqWfdza7q5RHL30jpN0k9z9+UJD1h1AKwbDYtVBK8ZotyCaFXF1Ao1GY86PHDDlZLq0e2MqfER5iNhmHZ3v62tc6OXx9gYHrUKGYHN/kxV39WsJkjEYGyKSNg2hMZSBxqtHe04528YpHICf1D2VnVsjUALLQR/uhr1oJZxv8L+H5fvD6QyF5ZlU1R2N5KwZd61x1w9Rv3SfPsEeUMXkMbfR3xDjZ0KM4FjjsJkEwXVFF+xNjozYBBGhlU+JxtGc34xm24VA6dWpDTfABo441c4TtgswDKkS4E4+CeAboKWVVC3wZLo93ClE0cjCPYivjqOuMmA9iDzcXBbrPrJJARfSz7qEPuN3J64g28Khrtd+41riLp5p7Fb3zB2g9fZOzLCXhmFnYeEKa67o0/TTJWngGmxo6n8YRtOCE24SSHKV82sAfm9RO73sC/GzTBtLoXH7ssfWQ4RPE6lJHS2ImZriYWDMF9fzSZF5pyReZmGWEVR/evfa3czM5fKxeMidi94mmoV9mvjqArruLZbCeIZsB3OBLEOxTzSFj500bAu4Sor/G3ssVitylsuNictj5JCv3WJBZxOgMyss8spnKCeYTehDgETuDF0jAFcV2Jp+6kGhd4gh9M8tKfm+NR9nnk88BTRJ/akaGbi9KXL6jlDt53PqYHs5hmNlmrGRrJGsKpv0MZUZ9iSWIfNZ335uPQL/1dBDmJ+0eaEfvka6UXlkODLktwEi5FpaNNxev9faIDbE01swiGEYIbHkL/ImafK3D7vd5zXE5FC8GyvE5TH7u/70RyTQXI1niCScbkQM6nYHwPyMQAmgdV+knTYtCAcGLbzFTp1wyp3unSXT5QxlIYK/zP5ubee3t6MQ6ef1gWtYJYNsbwBYZn83k803sPKhw/BqFNYYqk0PQrujZvwoqq2pmJAuX1mgpyYlRa6Kpvx1wZ8wanl06Pgn/Yl8++KtkypenF7xu2GWpLjuQWYljj/AD8t6i0OM46gKPFL170BmEvJFa8CLoZzLko8MwW1DCBEtsqVbDULDuAVE0oVFl4IOkjcDNJ3vDqEzXbZ3Jpo0v9MBjbU1rs9mrbDjvAjGB2LY+jAp4V0ICyE8wjCSbJaJLJEXdb4wSC2nOUrvbDEPUcqTEWQMjsyXCblXGIlMZfWrNfWBY0/rBYO2oMWaJZO2YxAXAgLIi5wue3tqyfUsYPEFLF+Hr4GLhPR399BEp68rvfdUV4iAaEs36PTI13d3phfH4zDjB+LLcF4BlB9eo0V0hAfotOSmfcjDcrpPeT/Y2zTXPquBDf+HA84KXID8Kju2QTEFsBH9J1ECIUFtBMPAZ+5tik38MkrvqIBiNNa2xZybaeAKUqKfgyj6hu9m/BTePCl4KVEkcRJwJQEnKmWWJ9Dv9J3qP75KOhnxuC5sGf42FWrdXDFtzNBQtGyTIeqEFfPhdFZED5v99iHbEAMeHoZ/HDAoyKhGzxasBE+yiTLMwLQMFYnjugAiOsP6uBltfV0ZH2Wy7REuyPOL6MfE5iUhDDm2s6jpp5vrsANuLY7H0x0NpNX1qL3DL9oznrT+j+omkoRKdY8Yb2oKU7+IN5sNdZ03alQh5uebQ9vFG8/2AGjbG31UY6ZSi1tiwulb/vMYvI5taxbKqm8k4VAnym6/cb4vf0faDqgYj/YafHKhcy15VLTiH0YcGo1f08NsQ+T9x7Cn2uwiu/6crRMyVaaql0lZVf+aqhRqdEDgxapUHZMbKfGX/b+QuE=</div>
+<div id="enc_passwd"> <input id="enc_pwd_input" type="password" style="border-radius: 5px;border-style: groove;height: 30px;width: 50%;cursor: auto;font-size: 102%;color: currentColor;outline: none;text-overflow: initial;padding-left: 5px;" onkeydown="if (event.keyCode == 13) { decrypt(); return false;}"> <input type="submit" value="解&nbsp;密" onclick="decrypt()" style="width: 58px;height: 34px;border-radius: 5px;background-color: white;border-style: solid;color: currentColor;"><div id="enc_error" style="display: inline-block;color: #d84527;margin-left: 10px"></div>
+<script>
+var onError = function(error) {
+	document.getElementById("enc_error").innerHTML = "password error!"
+};
+function decrypt() {
+var passwd = document.getElementById("enc_pwd_input").value;
+console.log(passwd);
+doDecrypt(passwd, onError);
+}
+</script>
+</div>
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='https://link.hhtjim.com/163/1363948882.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
