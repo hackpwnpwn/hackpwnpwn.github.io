@@ -167,6 +167,48 @@ C++提供的整数数据类型有三种：int，long，short。在Visual C++ 6.0
    <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add esp,4</span><br><span class="line">jmp [esp-4]</span><br></pre></td></tr></table></figure>
 
 <p>   这次是不能反过来的，因为jmp之后你下面的代码就执行不了了。</p>
+<h3 id="易语言破解小栗子"><a href="#易语言破解小栗子" class="headerlink" title="易语言破解小栗子"></a>易语言破解小栗子</h3><p><em>更新与2020.03.31</em></p>
+<ol>
+<li><p>先来看一下demo代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">.版本 <span class="number">2</span></span><br><span class="line">.支持库 spec</span><br><span class="line"></span><br><span class="line">.程序集 窗口程序集_启动窗口</span><br><span class="line"></span><br><span class="line">.子程序 __启动窗口_创建完毕</span><br><span class="line"></span><br><span class="line">编辑框<span class="number">1.</span>内容 ＝ 系统_取CPU序列号 ()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.子程序 _按钮<span class="number">1</span>_被单击</span><br><span class="line">.局部变量 注册码, 文本型</span><br><span class="line">.局部变量 机器码, 文本型</span><br><span class="line"></span><br><span class="line">机器码 ＝ 系统_取CPU序列号 ()</span><br><span class="line">注册码 ＝ 文本_颠倒 (机器码)</span><br><span class="line">调试输出 (注册码)</span><br><span class="line">.如果 (注册码 ＝ 编辑框<span class="number">2.</span>内容)</span><br><span class="line">    载入 (窗口<span class="number">1</span>, , 真)</span><br><span class="line">.否则</span><br><span class="line">    信息框 (“注册码错误”, <span class="number">0</span>, , )</span><br><span class="line">.如果结束</span><br></pre></td></tr></table></figure></li>
+<li><p>其实就是取了CPU的序列号作为机器码，注册码为机器码的颠倒</p>
+</li>
+<li><p>我们静态编译后拖入OD进行分析。</p>
+</li>
+<li><p>使用OD加载程序后来到了入口地址，这里我们常规的都是看一下注册码错误提示：<code>注册码错误</code>然后去回溯关键函数，但是我们这里有一个技巧就是先让程序正常的跑起来<br><img src="/2019/12/08/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93/e1.jpg" alt="image-e1"></p>
+<p>按下od里面e按钮查看模块，双击第一个，来到<code>00401000</code>的地址，这里不懂得自行补充PE的知识。</p>
+<p>然后在这边去智能搜索字符串，会比进入函数入口搜索的多。</p>
+</li>
+<li><p>然后在字符串窗口找到了关键字符串：<code>注册码错误</code>，双击进入，向上查找<code>push ebp</code>的位置</p>
+<p><img src="/2019/12/08/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93/image-20200331135406351.png" alt="image-20200331135406351"></p>
+<p>然后下断点运行，随便输入注册码后确认，函数随即断下来</p>
+</li>
+<li><p>然后我们开始分析这些代码，首先遇到第一个<code>call 0040110B</code>这个函数，我们回车进去看一下</p>
+<p><img src="/2019/12/08/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93/image-20200331135528649.png" alt="image-20200331135528649"></p>
+<p>看到了<code>cpuid</code>用来去CPU序列号的汇编指令，所以这个<code>call</code>就对应到我们易语言中的<code>系统_取CPU序列号</code>操作</p>
+<p>然后F8单步走过，看到<code>eax</code>寄存器确实已经获取到了CPU的序列号</p>
+<p><img src="/2019/12/08/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93/image-20200331135707095.png" alt="image-20200331135707095"></p>
+<p>然后继续F8下去遇到了<code>call 0040153C</code>这个函数，同样回车进去看，好的看不懂，直接F8走过，看<code>eax</code>寄存器的结果</p>
+<p><img src="/2019/12/08/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93/image-20200331135830911.png" alt="image-20200331135830911"></p>
+<p>很明显的就是将原本取出的序列号进行的倒序，对应易语言中的<code>注册码 ＝ 文本_颠倒 (机器码)</code></p>
+<p>继续向下走<code>call 00401C8B</code>中获取到了我们输入的假码，直到走到了<code>call 004012F9</code>处，我们回车进去看</p>
+<p><img src="/2019/12/08/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93/image-20200331140032933.png" alt="image-20200331140032933"></p>
+<p>这是易语言典型的文本对比的样子，然后基本确定这个函数是在对机器码和注册码进行对比，因为我们的注册码肯定是错误的，所以函数F8过去之后<code>eax</code>的值变成了<code>1</code>这时候我们如果在这里将<code>eax</code>置0，直接跑下去可以发现弹出了成功，我们称这个决定成功与否的函数叫做<code>关键call</code>，继续向下看代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0040142A  |.  83C4 08       add esp,0x8</span><br><span class="line">0040142D  |.  83F8 00       cmp eax,0x0</span><br><span class="line">00401430  |.  B8 00000000   mov eax,0x0</span><br><span class="line">00401435  |.  0f94c0        sete al</span><br><span class="line">00401438  |.  8945 F0       mov [local.4],eax</span><br><span class="line">0040143B  |.  8B5D F4       mov ebx,[local.3]</span><br><span class="line">0040143E  |.  85DB          test ebx,ebx</span><br></pre></td></tr></table></figure>
+
+<p>这是典型的判断，就是如果判断</p>
+<p><img src="/2019/12/08/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93/image-20200331140744685.png" alt="image-20200331140744685"></p>
+<p>这里我们修改掉<code>ZF</code>位为1也是可以绕过的。</p>
+<p>我们继续向下看，走到<code>cmp dword ptr ss:[ebp-0x10],0x0</code>位置是一个比较，走过之后因为是相等的，所以<code>Z</code>标志位变成了1，在下面的JE就会实现，跳转到验证码错误的位置，也就是说这个<code>JE</code>就是一个关键跳转，我们<code>NOP</code>掉这个跳转也是可以去成功登陆的。</p>
+<p>那么我们下面来玩个小操作，我们的易语言代码中正确输入了注册码之后会载入一个新的窗体，我们在<code>je</code>跳转的下方看到了如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">00401455    68 02000080     push 0x80000002</span><br><span class="line">0040145A    6A 00           push 0x0</span><br><span class="line">0040145C    68 01000000     push 0x1</span><br><span class="line">00401461    6A 00           push 0x0</span><br><span class="line">00401463    6A 00           push 0x0</span><br><span class="line">00401465    6A 00           push 0x0</span><br><span class="line">00401467    68 01000100     push 0x10001</span><br><span class="line">0040146C    68 1E230106     push 0x601231E</span><br><span class="line">00401471    68 1F230152     push 0x5201231F</span><br><span class="line">00401476    68 03000000     push 0x3</span><br></pre></td></tr></table></figure>
+
+<p>这是在干嘛呢？<code>push 0x10001</code>是易语言载入窗口的特征，在下面以<code>0x520</code>开头的就是窗体的ID，这时候呢我们就可以想到，直接在易语言主窗口加载的时候替换掉窗口ID不就是可以绕过开始的验证了嘛？</p>
+<p>我们首先复制:<code>push 0x5201231F</code>备用，然后重新载入窗口，在入口函数断点断下后不跑，我们<code>ctrl+b</code>搜索<code>FF 25</code>去找主窗口这时候会找到一堆的<code>JMP</code>跳转，这里就是易语言在初始化的，向上找会找到一个<code>push 0x52010001</code>这样一条语句，这里就是在加载易语言的主窗体，我们修改此处的汇编语句为<code>push 0x5201231F</code></p>
+<p><img src="/2019/12/08/%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93/image-20200331141835978.png" alt="image-20200331141835978"></p>
+<p>然后跑起来就发现我们已经绕过了最开始的验证窗口了</p>
+</li>
+</ol>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
