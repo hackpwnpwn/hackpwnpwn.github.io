@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>微信本地文件名逆向 - hackpwn</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="hackpwn,"> 
+    <meta name="description" content="微信本地文件名逆向（超详细傻瓜式教程）
+目的：解密新版微信本地文件 tencent/MicroMsg/...MD5,文件命名算法
+
+思路：查看MD5文件内容，逆向apk查找拼接路径代码，破解拼接文件,"> 
+    <meta name="author" content="dh、Catsay"> 
+    <link rel="alternative" href="atom.xml" title="hackpwn" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">hackpwn</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" target="_blank" rel="noopener" data-url="http://hackpwn.xyz"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">微信本地文件名逆向</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" target="_blank" rel="noopener" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;" target="_blank" rel="noopener"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">微信本地文件名逆向</h1>
+        <div class="stuff">
+            <span>六月 18, 2020</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Reverse/" rel="tag">Reverse</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h3 id="微信本地文件名逆向（超详细傻瓜式教程）"><a href="#微信本地文件名逆向（超详细傻瓜式教程）" class="headerlink" title="微信本地文件名逆向（超详细傻瓜式教程）"></a>微信本地文件名逆向（超详细傻瓜式教程）</h3><ul>
+<li><p><strong>目的：</strong><code>解密新版微信本地文件 tencent/MicroMsg/...MD5,文件命名算法</code></p>
+</li>
+<li><p><strong>思路</strong>：<code>查看MD5文件内容，逆向apk查找拼接路径代码，破解拼接文件MD5文件命名算法</code></p>
+</li>
+<li><p><strong>环境</strong>：<code>JADX 1.0.0，JEB,root手机6.0以上系统，frida，weixin707android1520 7.0.7.apk</code></p>
+</li>
+</ul>
+<hr>
+<ul>
+<li><p>1 通过备份命令backup，将手机微信备份至PC（非必须步骤）</p>
+</li>
+<li><p>2 点进354XXX3a7ab文件，找到方便查找路径的image2文件夹（其它也可）<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_3.jpg" alt="3"></p>
+</li>
+<li><p>3 将base文件夹中apk拖入Jadx中，文本搜索image2，点进去看到image2 前面append(g.acc().fvY)拼接的字符串,推测fvY可能为我们要找的。<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_4.jpg" alt="4"><br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_4.1.jpg" alt="4.1"></p>
+</li>
+<li><p>4 双击fvY,右键查找用例，找到fvy赋值位置<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_5.jpg" alt="5"></p>
+</li>
+<li><p>5 这里看到fvY有两部分，aaC.fvX + aaC.fwb。先跳转fwb赋值处,看到fwb最终由 y D 赋值。这里由经验分析y D分别对应微信新旧版本文件名算法规则。D为老版本，y为新版本<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_7.jpg" alt="7"></p>
+</li>
+<li><p>6 找到y赋值位置，String y = e.y(a2,D);<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_8.jpg" alt="8"></p>
+</li>
+<li><p>7 跟进函数y(),函数中cVar 、 cVar2 为路径字符串，d(cVar)函数，为读写文件操作。<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_9.jpg" alt="9"></p>
+</li>
+</ul>
+<ul>
+<li><p>分析d(cVar)函数，这里JADX挂了，转用JEB<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_10.jpg" alt="10"></p>
+</li>
+<li><p>此处用JEB分析<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_11.jpg" alt="11"></p>
+</li>
+<li><p>8 通过分析d(cVar)函数发现，此函数为读取account.bin中4096个字节保存为字符串。(cVar和cVar2为相同文件不同路径)<br>然后通过Java中MD5处理为32字节<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_12.jpg" alt="12"></p>
+</li>
+<li><p>9 整理Java md5部分代码（md5.java）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.security.MessageDigest;</span><br><span class="line"><span class="keyword">import</span>  java.util.Random;</span><br><span class="line"><span class="keyword">import</span>  java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">md5</span></span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span> <span class="params">(String args[])</span></span>&#123;</span><br><span class="line">	   <span class="keyword">try</span> &#123;	</span><br><span class="line">			</span><br><span class="line">            File f = <span class="keyword">new</span> File(<span class="string">"F:\\WXHOOK\\account.bin"</span>);</span><br><span class="line">            <span class="keyword">byte</span>[] data = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4096</span>];</span><br><span class="line">            <span class="keyword">new</span> FileInputStream(f).read(data);</span><br><span class="line">			MessageDigest instance = MessageDigest.getInstance(<span class="string">"MD5"</span>);</span><br><span class="line">			instance.update(data);</span><br><span class="line">			instance.update(Integer.toString(<span class="number">270843106</span>).getBytes());</span><br><span class="line">			<span class="keyword">byte</span>[] md5Key = instance.digest();</span><br><span class="line">			System.out.println(<span class="string">"oooo:"</span>+md5Key);</span><br><span class="line">			StringBuilder stringBuilder = <span class="keyword">new</span> StringBuilder(md5Key.length * <span class="number">2</span>);</span><br><span class="line">			<span class="keyword">char</span>[] cArr = <span class="keyword">new</span> <span class="keyword">char</span>[]&#123;<span class="string">'0'</span>, <span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'4'</span>, <span class="string">'5'</span>, <span class="string">'6'</span>, <span class="string">'7'</span>, <span class="string">'8'</span>, <span class="string">'9'</span>, <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>, <span class="string">'e'</span>, <span class="string">'f'</span>&#125;;</span><br><span class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> i2 = <span class="number">0</span>; i2 &lt; <span class="number">16</span>; i2++) &#123;</span><br><span class="line">				<span class="keyword">byte</span> b = md5Key[i2];</span><br><span class="line">				stringBuilder.append(cArr[(b &gt;&gt;&gt; <span class="number">4</span>) &amp; <span class="number">15</span>]).append(cArr[b &amp; <span class="number">15</span>]);</span><br><span class="line">			&#125;</span><br><span class="line">			String stringBuilder2 = stringBuilder.toString();</span><br><span class="line">			System.out.println(<span class="string">"xxxx:"</span>+stringBuilder2);</span><br><span class="line">		</span><br><span class="line">	   &#125;<span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">		   System.out.println(<span class="string">"222222"</span>);</span><br><span class="line">		   </span><br><span class="line">	   &#125;       </span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>10 account.bin还缺少关键路径，即static String y(int i, String str) 中str的值</p>
+</li>
+</ul>
+<p><img src="https://gitee.com/winandh/image/raw/master/img/VxName_13.jpg" alt="13"></p>
+<ul>
+<li><p>11 用Frida HOOK y(int i,String str) 参数的值。<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_14.jpg" alt="14"></p>
+</li>
+<li><p>12 HOOK代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> frida,sys</span><br><span class="line"></span><br><span class="line">def on_message(message,data):</span><br><span class="line">	<span class="keyword">if</span> message[<span class="string">'type'</span>]==<span class="string">'send'</span>:</span><br><span class="line">		print(<span class="string">"[*] &#123;0&#125;"</span>.format(message[<span class="string">'payload'</span>]))</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		print(message)</span><br><span class="line">		</span><br><span class="line">jscode=<span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">console.log("</span>Script loaded successfully <span class="string">");</span></span><br><span class="line"><span class="string">Java.perform(function()&#123;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    var StringClass=Java.use("</span>java.lang.String<span class="string">");</span></span><br><span class="line"><span class="string">    var haha=Java.use('com.tencent.mm.kernel.e'); </span></span><br><span class="line"><span class="string">    var arr = Java.use("</span>java.util.Arrays<span class="string">");</span></span><br><span class="line"><span class="string">    send("</span>com.tencent.mm.kernel.e...<span class="string">");</span></span><br><span class="line"><span class="string">	haha.y.overload("</span>int<span class="string">","</span>java.lang.String<span class="string">").implementation=function(i,str)&#123;</span></span><br><span class="line"><span class="string">        send("</span> -+y +-!<span class="string">"); </span></span><br><span class="line"><span class="string">        console.log("</span>xxxx:<span class="string">"+i);</span></span><br><span class="line"><span class="string">        console.log("</span>oooo:<span class="string">"+str);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">	&#125;</span></span><br><span class="line"><span class="string">          </span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string">"</span><span class="string">""</span></span><br><span class="line"></span><br><span class="line">process=frida.get_remote_device().attach(<span class="string">'com.tencent.mm'</span>)</span><br><span class="line">script=process.create_script(jscode)</span><br><span class="line">script.on(<span class="string">'message'</span>,on_message)</span><br><span class="line">script.load()</span><br><span class="line">sys.stdin.read()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>13 结果正是我们要解密的文件名（很尴尬）,根据步骤10中可知acconut.bin分别存在 cVar、cVar2中。<br>那么就可以推断 cVar中account.bin目录与MicroMsg为同级目录。在备份文件中找到account.bin位置（尬住，直接文件搜索account.bin不香么）。<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_15.jpg" alt="15"></p>
+</li>
+<li><p>14 根据步骤8中，从account.bin中读取4096字节保存成字符串，并用JAVA md5算法加密字符串（java中与C++ mD5存在差异。实现：读取指定字符串长度并实现C++与JAVA相同MD5算法）<br>具体实现参考我在博客园的随笔<a href="https://www.cnblogs.com/dh666/p/11821233.html" target="_blank" rel="noopener">https://www.cnblogs.com/dh666/p/11821233.html</a></p>
+</li>
+<li><p>15 md5.java测试（测试微信版本为7.0.15）<br>（注：javac md5.java:根据java代码生成可执行.class文件。java md5 中md5为类名）<br><img src="https://gitee.com/winandh/image/raw/master/img/VxName_16.jpg" alt="16"></p>
+<h4 id="end"><a href="#end" class="headerlink" title="end:"></a>end:</h4><p>新版本地文件没算法为 ：读取account.bin 4096字节计算的MD5值。做个笔记，提供简单破解方法。</p>
+</li>
+</ul>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='https://link.hhtjim.com/163/1363948882.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
